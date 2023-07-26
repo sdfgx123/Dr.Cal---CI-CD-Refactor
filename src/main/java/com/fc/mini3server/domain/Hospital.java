@@ -1,6 +1,8 @@
 package com.fc.mini3server.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,33 +14,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Entity(name = "schedule_tb")
-public class Schedule {
+@Entity(name = "hospital_tb")
+public class Hospital {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private User userId;
-
-    @ManyToOne(optional = false)
-    private Hospital hospitalId;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false)
-    private Category category;
-
-    @Column(nullable = false)
-    private LocalDateTime startDate;
-
-    @Column(nullable = false)
-    private LocalDateTime endDate;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false)
-    private Evaluation evaluation;
-
-    private String reason;
+    @Column(nullable = false, unique = true, length = 20)
+    public String name;
 
     @CreatedDate
     @Column(nullable = false)
