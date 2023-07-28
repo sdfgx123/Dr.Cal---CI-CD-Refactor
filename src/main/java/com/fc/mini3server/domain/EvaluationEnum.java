@@ -1,6 +1,6 @@
 package com.fc.mini3server.domain;
 
-public enum Evaluation {
+public enum EvaluationEnum {
     STANDBY,
     APPROVED,
     REJECTED

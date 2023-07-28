@@ -26,7 +26,7 @@ public class Schedule {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Category category;
+    private CategoryEnum category;
 
     @Column(nullable = false)
     private LocalDateTime startDate;
@@ -36,7 +36,7 @@ public class Schedule {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Evaluation evaluation;
+    private EvaluationEnum evaluation;
 
     private String reason;
 

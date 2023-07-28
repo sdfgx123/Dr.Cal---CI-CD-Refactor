@@ -41,15 +41,15 @@ public class User {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Level level;
+    private LevelEnum level;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Auth auth;
+    private AuthEnum auth;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private StatusEnum status;
 
     private int annual;
 

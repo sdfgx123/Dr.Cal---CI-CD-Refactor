@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Level {
-    PK,
-    INTERN,
-    RESIDENT,
-    FELLOW
+public enum AuthEnum {
+    USER,
+    ADMIN
 }
