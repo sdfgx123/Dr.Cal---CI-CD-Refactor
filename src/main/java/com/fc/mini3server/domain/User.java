@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name = "user_tb")
 public class User {
@@ -41,15 +42,15 @@ public class User {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Level level;
+    private LevelEnum level;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Auth auth;
+    private AuthEnum auth;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private StatusEnum status;
 
     private int annual;
 
@@ -70,4 +71,5 @@ public class User {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
 }
