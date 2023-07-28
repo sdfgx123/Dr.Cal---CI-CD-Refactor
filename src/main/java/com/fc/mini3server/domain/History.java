@@ -18,10 +18,10 @@ public class History {
     private Long id;
 
     @ManyToOne(optional = false)
-    private User userId;
+    private User user;
 
     @ManyToOne(optional = false)
-    private Schedule scheduleId;
+    private Schedule schedule;
 
     @CreatedDate
     @Column(nullable = false)

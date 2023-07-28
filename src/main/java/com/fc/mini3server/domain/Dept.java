@@ -21,7 +21,7 @@ public class Dept {
     private Long id;
 
     @ManyToOne(optional = false)
-    private Hospital hospitalId;
+    private Hospital hospital;
 
     @Column(nullable = false, unique = true, length = 20)
     public String name;

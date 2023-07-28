@@ -19,10 +19,10 @@ public class Schedule {
     private Long id;
 
     @ManyToOne(optional = false)
-    private User userId;
+    private User user;
 
     @ManyToOne(optional = false)
-    private Hospital hospitalId;
+    private Hospital hospital;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
