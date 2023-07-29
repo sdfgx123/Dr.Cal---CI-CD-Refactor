@@ -13,9 +13,8 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     public User findById(Long id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new Exception400(String.valueOf(id) ,"해당 아이디가 존재하지 않습니다."));
-        return user;
     }
 
     public List<User> findAll() {
