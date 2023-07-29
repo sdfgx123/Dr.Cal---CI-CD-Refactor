@@ -6,9 +6,11 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -19,20 +21,20 @@ public class Schedule {
     private Long id;
 
     @ManyToOne(optional = false)
-    private User userId;
+    private User user;
 
     @ManyToOne(optional = false)
-    private Hospital hospitalId;
+    private Hospital hospital;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private CategoryEnum category;
 
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)

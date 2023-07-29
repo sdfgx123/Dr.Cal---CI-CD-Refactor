@@ -35,10 +35,10 @@ public class User {
     private String phone;
 
     @ManyToOne(optional = false)
-    private Hospital hospitalId;
+    private Hospital hospital;
 
     @ManyToOne(optional = false)
-    private Dept deptId;
+    private Dept dept;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)

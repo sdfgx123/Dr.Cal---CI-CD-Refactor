@@ -1,6 +1,7 @@
 package com.fc.mini3server.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -21,7 +23,7 @@ public class Dept {
     private Long id;
 
     @ManyToOne(optional = false)
-    private Hospital hospitalId;
+    private Hospital hospital;
 
     @Column(nullable = false, unique = true, length = 20)
     public String name;
