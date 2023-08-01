@@ -19,6 +19,6 @@ public class DeptService {
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
         );
 
-        return deptRepository.findAll();
+        return deptRepository.findAllByHospitalId(id);
     }
 }
