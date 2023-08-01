@@ -2,7 +2,6 @@ package com.fc.mini3server.controller;
 
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Dept;
-import com.fc.mini3server.dto.DeptResponseDTO;
 import com.fc.mini3server.service.DeptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
