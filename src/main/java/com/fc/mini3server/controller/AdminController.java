@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
 
 @RequiredArgsConstructor
@@ -29,13 +30,13 @@ public class AdminController {
     }
 
     @PostMapping("/users/{id}/auth")
-    public ResponseEntity<?> editAuth(@PathVariable Long id, @RequestBody AdminRequestDTO.editAuthDTO requestDTO){
+    public ResponseEntity<?> editAuth(@PathVariable Long id, @RequestBody editAuthDTO requestDTO){
         userService.updateUserAuth(id, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @PostMapping("/users/{id}/status")
-    public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody AdminRequestDTO.editStatusDTO requestDTO){
+    public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody editStatusDTO requestDTO){
         userService.updateUserStatus(id, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
@@ -44,5 +45,11 @@ public class AdminController {
     public ResponseEntity<?> findAnnualList(Pageable pageable){
         final List<Schedule> scheduleList = scheduleService.findAnnualList(pageable).getContent();
         return ResponseEntity.ok(ApiUtils.success(AdminAnnualListDTO.listOf(scheduleList)));
+    }
+
+    @PostMapping("/{id}/evaluation")
+    public ResponseEntity<?> editEvaluation(@PathVariable Long id, @RequestBody editEvaluationDTO requestDTO){
+        scheduleService.updateScheduleEvaluation(id, requestDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 }

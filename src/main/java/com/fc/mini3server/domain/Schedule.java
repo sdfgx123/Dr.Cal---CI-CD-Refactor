@@ -49,4 +49,8 @@ public class Schedule {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public void updateEvaluation(EvaluationEnum evaluation){
+        this.evaluation = evaluation;
+    }
 }
