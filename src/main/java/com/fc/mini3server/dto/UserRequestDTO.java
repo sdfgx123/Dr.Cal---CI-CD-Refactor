@@ -1,8 +1,6 @@
 package com.fc.mini3server.dto;
 
-import com.fc.mini3server.domain.Dept;
-import com.fc.mini3server.domain.Hospital;
-import com.fc.mini3server.domain.User;
+import com.fc.mini3server.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +8,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 public class UserRequestDTO {
@@ -36,22 +36,53 @@ public class UserRequestDTO {
         @NotBlank
         private String name;
 
-        @NotBlank
-        private Hospital hospital_id;
+        @NotNull
+        private Long hospital_id;
 
-        @NotBlank
-        private Dept dept_id;
+        @NotNull
+        private Long dept_id;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class saveDTO {
+        private String email;
+        private String password;
+        private String phone;
+        private String name;
+        private Hospital hospital;
+        private Dept dept;
+        private Long empNo;
+        private LocalDate hireDate;
 
         public User toEntity(PasswordEncoder passwordEncoder) {
             String encodedPassword = passwordEncoder.encode(this.password);
             return User.builder()
+                    .empNo(empNo)
+                    .hiredDate(hireDate)
                     .email(email)
                     .password(encodedPassword)
                     .phone(phone)
                     .name(name)
-                    .hospital(hospital_id)
-                    .dept(dept_id)
+                    .hospital(hospital)
+                    .dept(dept)
+                    .level(LevelEnum.PK)
+                    .auth(AuthEnum.USER)
+                    .status(StatusEnum.NOTAPPROVED)
                     .build();
         }
+    }
+
+    @Getter
+    public static class loginDTO {
+
+        @NotBlank
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$", message = "유효하지 않은 이메일 형식입니다.")
+        private String email;
+
+        @NotBlank
+        private String password;
     }
 }
