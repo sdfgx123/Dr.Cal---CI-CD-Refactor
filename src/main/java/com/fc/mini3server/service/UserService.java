@@ -1,5 +1,6 @@
 package com.fc.mini3server.service;
 
+import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server._core.security.JwtTokenProvider;
@@ -13,14 +14,21 @@ import com.fc.mini3server.repository.DeptRepository;
 import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -80,10 +88,30 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new Exception400(String.valueOf(id) ,"해당 아이디가 존재하지 않습니다."));
+                .orElseThrow(() -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
     }
 
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public Page<User> findAll(Pageable pageable){
+        return userRepository.findAllByOrderByIdDesc(pageable);
+    }
+
+    @Transactional
+    public void updateUserAuth(Long id, editAuthDTO requestDTO) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+
+        user.updateAuth(requestDTO.getAuth());
+    }
+
+    @Transactional
+    public void updateUserStatus(Long id, editStatusDTO requestDTO) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+
+        user.updateStatus(requestDTO.getStatus());
     }
 }

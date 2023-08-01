@@ -26,54 +26,157 @@ public class DBInit {
     CommandLineRunner initDB(){
         return args -> {
             Hospital hospital1 = Hospital.builder()
-                    .name("강남세브란스병원")
+                    .name("서울대학교 병원")
                     .build();
             Hospital hospital2 = Hospital.builder()
-                    .name("서울성모병원")
+                    .name("연세 세브란스 병원")
                     .build();
-            hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2));
+            Hospital hospital3 = Hospital.builder()
+                    .name("고려대학교 안암병원")
+                    .build();
+            hospitalRepository.saveAll(Arrays.asList(hospital1, hospital2, hospital3));
 
             Dept dept10 = Dept.builder()
-                    .name("간담체외과")
+                    .name("응급의학과")
                     .hospital(hospital1)
                     .build();
             Dept dept11 = Dept.builder()
-                    .name("소아과")
+                    .name("내과")
                     .hospital(hospital1)
                     .build();
             Dept dept12 = Dept.builder()
-                    .name("신경외과")
+                    .name("외과")
                     .hospital(hospital1)
                     .build();
             Dept dept13 = Dept.builder()
-                    .name("정형외과")
+                    .name("산부인과")
                     .hospital(hospital1)
                     .build();
             Dept dept14 = Dept.builder()
-                    .name("흉부외과")
+                    .name("가정의학과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept15 = Dept.builder()
+                    .name("피부과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept16 = Dept.builder()
+                    .name("마취통증의학과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept17 = Dept.builder()
+                    .name("안과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept18 = Dept.builder()
+                    .name("이비인후과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept19 = Dept.builder()
+                    .name("신경외과")
+                    .hospital(hospital1)
+                    .build();
+            Dept dept20 = Dept.builder()
+                    .name("정신건강의학과")
                     .hospital(hospital1)
                     .build();
 
-            Dept dept20 = Dept.builder()
-                    .name("가정의학과")
-                    .hospital(hospital2)
-                    .build();
             Dept dept21 = Dept.builder()
-                    .name("마취통증외학과")
+                    .name("응급의학과")
                     .hospital(hospital2)
                     .build();
             Dept dept22 = Dept.builder()
-                    .name("종양내과")
+                    .name("내과")
                     .hospital(hospital2)
                     .build();
             Dept dept23 = Dept.builder()
-                    .name("진단검사의학과")
+                    .name("외과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept24 = Dept.builder()
+                    .name("산부인과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept25 = Dept.builder()
+                    .name("성형외과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept26 = Dept.builder()
+                    .name("신경과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept27 = Dept.builder()
+                    .name("영상의학과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept28 = Dept.builder()
+                    .name("이비인후과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept29 = Dept.builder()
+                    .name("정형외과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept30 = Dept.builder()
+                    .name("피부과")
+                    .hospital(hospital2)
+                    .build();
+            Dept dept31 = Dept.builder()
+                    .name("피부과")
                     .hospital(hospital2)
                     .build();
 
+            Dept dept32 = Dept.builder()
+                    .name("응급의학과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept33 = Dept.builder()
+                    .name("소화기내과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept34 = Dept.builder()
+                    .name("흉부외과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept35 = Dept.builder()
+                    .name("정신건강의학과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept36 = Dept.builder()
+                    .name("순환기내과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept37 = Dept.builder()
+                    .name("간담췌외과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept38 = Dept.builder()
+                    .name("산부인과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept39 = Dept.builder()
+                    .name("신경과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept40 = Dept.builder()
+                    .name("정형외과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept41 = Dept.builder()
+                    .name("핵의학과")
+                    .hospital(hospital3)
+                    .build();
+            Dept dept42 = Dept.builder()
+                    .name("가정의학과")
+                    .hospital(hospital3)
+                    .build();
+
             deptRepository.saveAll(Arrays.asList(
-                    dept10, dept11, dept12, dept13, dept14,
-                    dept20, dept21, dept22, dept23));
+                    dept10, dept11, dept12, dept13, dept14, dept15, dept16, dept17, dept18, dept19, dept20,
+                    dept21, dept22, dept23, dept24, dept25, dept26, dept27, dept28, dept29, dept30,
+                    dept31, dept32, dept33, dept34, dept35, dept36, dept37, dept38, dept39, dept40,
+                    dept41, dept42
+                    ));
 
             long empNo = 10000000L;
             User user1 = User.builder()
@@ -149,7 +252,26 @@ public class DBInit {
                     .reason("징검다리 휴가")
                     .build();
 
-            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2));
+            Schedule schedule21 = Schedule.builder()
+                    .user(user1)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 4))
+                    .endDate(LocalDate.of(2023, 8, 4))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
+
+            Schedule schedule22 = Schedule.builder()
+                    .user(user2)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 5))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
+
+            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2,
+                    schedule21, schedule22));
         };
     }
 }
