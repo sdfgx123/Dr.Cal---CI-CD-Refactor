@@ -1,13 +1,12 @@
 package com.fc.mini3server.dto;
 
-import com.fc.mini3server.domain.AuthEnum;
-import com.fc.mini3server.domain.LevelEnum;
-import com.fc.mini3server.domain.StatusEnum;
-import com.fc.mini3server.domain.User;
+import com.fc.mini3server.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +32,30 @@ public class AdminResponseDTO {
 
         public static List<AdminUserListDTO> listOf(List<User> users){
             return users.stream().map(AdminUserListDTO::of).collect(Collectors.toList());
+        }
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class AdminAnnualListDTO {
+        private Long scheduleId;
+        private String username;
+        private CategoryEnum category;
+        private LevelEnum level;
+        private LocalDateTime createdAt;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private EvaluationEnum evaluation;
+
+        public static AdminAnnualListDTO of(Schedule schedule) {
+            return new AdminAnnualListDTO(schedule.getId(), schedule.getUser().getName(),
+                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(),
+                    schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
+        }
+
+        public static List<AdminAnnualListDTO> listOf(List<Schedule> scheduleList){
+            return scheduleList.stream().map(AdminAnnualListDTO::of).collect(Collectors.toList());
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.fc.mini3server.controller;
 
 import com.fc.mini3server._core.utils.ApiUtils;
+import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.User;
 import com.fc.mini3server.dto.AdminRequestDTO;
+import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import static com.fc.mini3server.dto.AdminResponseDTO.*;
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
+    private final ScheduleService scheduleService;
 
     @GetMapping("/")
     public ResponseEntity<?> findAll(Pageable pageable) {
@@ -35,5 +38,11 @@ public class AdminController {
     public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody AdminRequestDTO.editStatusDTO requestDTO){
         userService.updateUserStatus(id, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @GetMapping("/annual")
+    public ResponseEntity<?> findAnnualList(Pageable pageable){
+        final List<Schedule> scheduleList = scheduleService.findAnnualList(pageable).getContent();
+        return ResponseEntity.ok(ApiUtils.success(AdminAnnualListDTO.listOf(scheduleList)));
     }
 }
