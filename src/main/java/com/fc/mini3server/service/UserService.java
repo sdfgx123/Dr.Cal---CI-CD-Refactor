@@ -2,7 +2,6 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.User;
-import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +45,13 @@ public class UserService {
                 () -> new Exception400(String.valueOf(id), "해당 아이디가 존재하지 않습니다."));
 
         user.updateAuth(requestDTO.getAuth());
+    }
+
+    @Transactional
+    public void updateUserStatus(Long id, editStatusDTO requestDTO) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), "해당 아이디가 존재하지 않습니다."));
+
+        user.updateStatus(requestDTO.getStatus());
     }
 }

@@ -30,4 +30,10 @@ public class AdminController {
         userService.updateUserAuth(id, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @PostMapping("/users/{id}/status")
+    public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody AdminRequestDTO.editStatusDTO requestDTO){
+        userService.updateUserStatus(id, requestDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 }
