@@ -3,7 +3,6 @@ package com.fc.mini3server.controller;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.User;
-import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +44,12 @@ public class AdminController {
     public ResponseEntity<?> findAnnualList(Pageable pageable){
         final List<Schedule> scheduleList = scheduleService.findAnnualList(pageable).getContent();
         return ResponseEntity.ok(ApiUtils.success(AdminAnnualListDTO.listOf(scheduleList)));
+    }
+
+    @GetMapping("/duty")
+    public ResponseEntity<?> findDutyList(Pageable pageable){
+        final List<Schedule> scheduleList = scheduleService.findDutyList(pageable).getContent();
+        return ResponseEntity.ok(ApiUtils.success(DutyListDTO.listOf(scheduleList)));
     }
 
     @PostMapping("/{id}/evaluation")

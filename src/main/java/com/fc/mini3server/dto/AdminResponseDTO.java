@@ -58,4 +58,27 @@ public class AdminResponseDTO {
             return scheduleList.stream().map(AdminAnnualListDTO::of).collect(Collectors.toList());
         }
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class DutyListDTO {
+        private Long scheduleId;
+        private String username;
+        private CategoryEnum category;
+        private LevelEnum level;
+        private LocalDateTime createdAt;
+        private LocalDate startDate;
+        private EvaluationEnum evaluation;
+
+        public static DutyListDTO of(Schedule schedule) {
+            return new DutyListDTO(schedule.getId(), schedule.getUser().getName(),
+                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(),
+                    schedule.getStartDate(), schedule.getEvaluation());
+        }
+
+        public static List<DutyListDTO> listOf(List<Schedule> scheduleList){
+            return scheduleList.stream().map(DutyListDTO::of).collect(Collectors.toList());
+        }
+    }
 }
