@@ -25,7 +25,7 @@ public class Dept {
     @ManyToOne(optional = false)
     private Hospital hospital;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20)
     public String name;
 
     @CreatedDate
