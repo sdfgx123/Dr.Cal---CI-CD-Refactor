@@ -1,5 +1,6 @@
 package com.fc.mini3server.service;
 
+import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.Schedule;
@@ -26,7 +27,7 @@ public class ScheduleService {
     @Transactional
     public void updateScheduleEvaluation(Long id, AdminRequestDTO.editEvaluationDTO requestDTO) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), "해당 아이디가 존재하지 않습니다."));
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
         schedule.updateEvaluation(requestDTO.getEvaluation());
     }

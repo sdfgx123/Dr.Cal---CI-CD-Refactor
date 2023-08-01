@@ -1,5 +1,6 @@
 package com.fc.mini3server.service;
 
+import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.User;
 import com.fc.mini3server.dto.UserRequestDTO;
@@ -28,7 +29,7 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new Exception400(String.valueOf(id) ,"해당 아이디가 존재하지 않습니다."));
+                .orElseThrow(() -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
     }
 
     public List<User> findAll() {
@@ -42,7 +43,7 @@ public class UserService {
     @Transactional
     public void updateUserAuth(Long id, editAuthDTO requestDTO) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), "해당 아이디가 존재하지 않습니다."));
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
         user.updateAuth(requestDTO.getAuth());
     }
@@ -50,7 +51,7 @@ public class UserService {
     @Transactional
     public void updateUserStatus(Long id, editStatusDTO requestDTO) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), "해당 아이디가 존재하지 않습니다."));
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
         user.updateStatus(requestDTO.getStatus());
     }
