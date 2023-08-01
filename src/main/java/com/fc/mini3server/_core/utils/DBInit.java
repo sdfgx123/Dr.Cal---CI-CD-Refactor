@@ -149,7 +149,26 @@ public class DBInit {
                     .reason("징검다리 휴가")
                     .build();
 
-            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2));
+            Schedule schedule21 = Schedule.builder()
+                    .user(user1)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 4))
+                    .endDate(LocalDate.of(2023, 8, 4))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
+
+            Schedule schedule22 = Schedule.builder()
+                    .user(user2)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 5))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
+
+            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2,
+                    schedule21, schedule22));
         };
     }
 }
