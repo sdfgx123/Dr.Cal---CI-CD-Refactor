@@ -72,4 +72,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    public void updateAuth(AuthEnum auth){
+        this.auth = auth;
+    }
 }
