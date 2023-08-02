@@ -15,6 +15,7 @@ import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -82,6 +84,8 @@ public class UserService {
         if (user.getStatus() != StatusEnum.APPROVED) {
             throw new Exception401("인증되지 않은 사용자 입니다.");
         }
+
+        log.info("로그인 성공 / 사용자 구분 : " + user.getAuth());
 
         return jwtTokenProvider.create(user);
     }
