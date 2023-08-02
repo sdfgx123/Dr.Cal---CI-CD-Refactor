@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server._core.utils.FilterResponse;
+import com.fc.mini3server.domain.AuthEnum;
 import com.fc.mini3server.domain.StatusEnum;
 import com.fc.mini3server.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +48,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             Long id = decodedJWT.getClaim("id").asLong();
             String status = decodedJWT.getClaim("status").asString();
             StatusEnum statusEnum = StatusEnum.valueOf(status);
+            String auth = decodedJWT.getClaim("auth").asString();
+            AuthEnum authEnum = AuthEnum.valueOf(auth);
 
-            User user = User.builder().name(username).id(id).status(statusEnum).build();
+            User user = User.builder().name(username).id(id).status(statusEnum).auth(authEnum).build();
 
             PrincipalUserDetail myUserDetails = new PrincipalUserDetail(user);
             Authentication authentication =
