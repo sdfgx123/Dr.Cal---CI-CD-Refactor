@@ -39,6 +39,7 @@ public class JwtTokenProvider {
                 .withClaim("username", user.getName())
                 .withClaim("id", user.getId())
                 .withClaim("status", user.getStatus().name())
+                .withClaim("auth", user.getAuth().name())
                 .sign(Algorithm.HMAC512(secretKey));
         return TOKEN_PREFIX + jwt;
     }
