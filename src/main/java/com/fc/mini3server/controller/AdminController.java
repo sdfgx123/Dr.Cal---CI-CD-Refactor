@@ -5,6 +5,7 @@ import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.User;
 import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
 
+@Tag(name = "Admin", description = "어드민 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin")
