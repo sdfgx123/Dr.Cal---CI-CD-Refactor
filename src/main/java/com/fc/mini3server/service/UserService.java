@@ -22,12 +22,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
@@ -88,6 +90,39 @@ public class UserService {
         log.info("로그인 성공 / 사용자 구분 : " + user.getAuth());
 
         return jwtTokenProvider.create(user);
+    }
+
+    public void updatePasswordProc(UserRequestDTO.updatePasswordDTO updatePasswordDTO) {
+        log.info("old : " + updatePasswordDTO.getOld_password());
+        log.info("new : " + updatePasswordDTO.getNew_password());
+        User user = getUser();
+        log.info("user.password : " + user.getPassword());
+        validateOldPassword(user, updatePasswordDTO.getOld_password());
+        user.changePassword(updatePasswordDTO.getNew_password(), passwordEncoder);
+        userRepository.save(user);
+
+    }
+
+    private User getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("authentication : " + authentication);
+        if (authentication == null) {
+            throw new Exception401("인증되지 않은 유저입니다.");
+        }
+        if (! (authentication.getPrincipal() instanceof PrincipalUserDetail)) {
+            throw new Exception400("올바른 토큰이 아닙니다.");
+        }
+        Long id = ((PrincipalUserDetail) authentication.getPrincipal()).getUser().getId();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new Exception400("입력한 비밀번호와 일치하는 회원이 없습니다."));
+        return user;
+//        return ((PrincipalUserDetail) authentication.getPrincipal()).getUser();
+    }
+
+    private void validateOldPassword(User user, String oldPassword) {
+        if (! passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new Exception400("입력하신 비밀번호가 일치하지 않습니다.");
+        }
     }
 
     public User findById(Long id) {

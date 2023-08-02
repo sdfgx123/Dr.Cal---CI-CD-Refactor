@@ -46,6 +46,12 @@ public class UserController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @PostMapping("/updatePassword")
+    public ResponseEntity<ApiUtils.ApiResult<String>> updatePassword(@RequestBody @Valid UserRequestDTO.updatePasswordDTO updatePasswordDTO, Errors errors) {
+        userService.updatePasswordProc(updatePasswordDTO);
+        return ResponseEntity.ok().body(null);
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
         final User user = userService.findById(id);
