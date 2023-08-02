@@ -5,6 +5,7 @@ import com.fc.mini3server.domain.User;
 import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name = "User", description = "유저 API")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
