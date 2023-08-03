@@ -1,14 +1,12 @@
 package com.fc.mini3server.service;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server._core.security.JwtTokenProvider;
 import com.fc.mini3server._core.security.PrincipalUserDetail;
-import com.fc.mini3server.domain.Dept;
-import com.fc.mini3server.domain.Hospital;
-import com.fc.mini3server.domain.StatusEnum;
-import com.fc.mini3server.domain.User;
+import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.repository.DeptRepository;
 import com.fc.mini3server.repository.HospitalRepository;
@@ -46,25 +44,34 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
-        Hospital hospital = hospitalRepository.findById(registerDTO.getHospital_id())
-                        .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospital_id()));
-        Dept dept = deptRepository.findById(registerDTO.getDept_id())
-                        .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDept_id()));
+        try {
+            Hospital hospital = hospitalRepository.findById(registerDTO.getHospital_id())
+                    .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospital_id()));
+            Dept dept = deptRepository.findById(registerDTO.getDept_id())
+                    .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDept_id()));
 
-        Long empNo = initiateEmpNo();
-        LocalDate hireDate = LocalDate.now();
+            Long empNo = initiateEmpNo();
+            LocalDate hireDate = LocalDate.now();
+            int annual = 15;
+            int duty = 3;
 
-        UserRequestDTO.saveDTO saveDTO = UserRequestDTO.saveDTO.builder()
-                        .empNo(empNo)
-                        .hireDate(hireDate)
-                        .email(registerDTO.getEmail())
-                        .password(registerDTO.getPassword())
-                        .phone(registerDTO.getPhone())
-                        .name(registerDTO.getName())
-                        .hospital(hospital)
-                        .dept(dept)
-                        .build();
-        userRepository.save(saveDTO.toEntity(passwordEncoder));
+            UserRequestDTO.saveDTO saveDTO = UserRequestDTO.saveDTO.builder()
+                    .empNo(empNo)
+                    .hireDate(hireDate)
+                    .email(registerDTO.getEmail())
+                    .password(registerDTO.getPassword())
+                    .phone(registerDTO.getPhone())
+                    .name(registerDTO.getName())
+                    .hospital(hospital)
+                    .dept(dept)
+                    .annual(annual)
+                    .duty(duty)
+                    .level(registerDTO.getLevel())
+                    .build();
+            userRepository.save(saveDTO.toEntity(passwordEncoder));
+        } catch (IllegalArgumentException e) {
+            throw new Exception400("요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.");
+        }
     }
 
     private Long initiateEmpNo() {

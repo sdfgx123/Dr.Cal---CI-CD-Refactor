@@ -41,6 +41,9 @@ public class UserRequestDTO {
 
         @NotNull
         private Long dept_id;
+
+        @Builder.Default
+        private LevelEnum level = LevelEnum.INTERN;
     }
 
     @Getter
@@ -56,6 +59,9 @@ public class UserRequestDTO {
         private Dept dept;
         private Long empNo;
         private LocalDate hireDate;
+        private LevelEnum level;
+        private int annual;
+        private int duty;
 
         public User toEntity(PasswordEncoder passwordEncoder) {
             String encodedPassword = passwordEncoder.encode(this.password);
@@ -68,9 +74,11 @@ public class UserRequestDTO {
                     .name(name)
                     .hospital(hospital)
                     .dept(dept)
-                    .level(LevelEnum.PK)
+                    .level(level)
                     .auth(AuthEnum.USER)
                     .status(StatusEnum.NOTAPPROVED)
+                    .annual(annual)
+                    .duty(duty)
                     .build();
         }
     }
