@@ -1,6 +1,5 @@
 package com.fc.mini3server.service;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
@@ -158,10 +156,24 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserStatus(Long id, editStatusDTO requestDTO) {
+    public void approveUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
-        user.updateStatus(requestDTO.getStatus());
+        if (!user.getStatus().equals(StatusEnum.NOTAPPROVED))
+            throw new Exception400(Message.INVALID_USER_STATUS_NOT_APPROVED);
+
+        user.updateStatus(StatusEnum.APPROVED);
+    }
+
+    @Transactional
+    public void retireUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+
+        if (!user.getStatus().equals(StatusEnum.APPROVED))
+            throw new Exception400(Message.INVALID_USER_STATUS_APPROVED);
+
+        user.updateStatus(StatusEnum.RETIRED);
     }
 }

@@ -45,9 +45,15 @@ public class AdminController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @PostMapping("/users/{id}/status")
-    public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody editStatusDTO requestDTO){
-        userService.updateUserStatus(id, requestDTO);
+    @PostMapping("/users/{id}/approve")
+    public ResponseEntity<?> userApprove(@PathVariable Long id){
+        userService.approveUser(id);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @PostMapping("/users/{id}/retire")
+    public ResponseEntity<?> userRetire(@PathVariable Long id){
+        userService.retireUser(id);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
