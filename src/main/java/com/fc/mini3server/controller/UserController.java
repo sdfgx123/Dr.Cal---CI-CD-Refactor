@@ -54,6 +54,19 @@ public class UserController {
         return ResponseEntity.ok().body(null);
     }
 
+    @GetMapping("/myPage")
+    public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO>> myPage() {
+        User user = userService.getUser();
+        UserResponseDTO responseDTO = UserResponseDTO.of(user);
+        return ResponseEntity.ok(ApiUtils.success(responseDTO));
+    }
+
+    @PostMapping("/editUser")
+    public ResponseEntity<ApiUtils.ApiResult<String>> updateUser(@RequestBody @Valid UserRequestDTO.updateUserDTO updateUserDTO, Errors errors) {
+        userService.updateUserProc(updateUserDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
         final User user = userService.findById(id);
