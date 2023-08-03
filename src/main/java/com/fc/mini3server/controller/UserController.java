@@ -51,7 +51,7 @@ public class UserController {
     @PostMapping("/updatePassword")
     public ResponseEntity<ApiUtils.ApiResult<String>> updatePassword(@RequestBody @Valid UserRequestDTO.updatePasswordDTO updatePasswordDTO, Errors errors) {
         userService.updatePasswordProc(updatePasswordDTO);
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @GetMapping("/myPage")
