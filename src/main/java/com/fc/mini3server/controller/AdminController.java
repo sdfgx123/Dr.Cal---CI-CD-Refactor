@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
 
@@ -28,15 +26,19 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<?> findAllUsers(Pageable pageable) {
         final Page<User> userList = userService.findAllUserListAdmin(pageable);
-        return ResponseEntity.ok(ApiUtils.success(userList.getTotalPages(),
-                AdminUserListDTO.listOf(userList.getContent())));
+        return ResponseEntity.ok(ApiUtils.success(
+                userList.getTotalPages(),
+                AdminUserListDTO.listOf(userList.getContent()))
+        );
     }
 
     @GetMapping("/register")
     public ResponseEntity<?> joinUserList(Pageable pageable) {
         final Page<User> joinList = userService.findAllJoinUserListAdmin(pageable);
-        return ResponseEntity.ok(ApiUtils.success(joinList.getTotalPages(),
-                joinReqListDTO.listOf(joinList.getContent())));
+        return ResponseEntity.ok(ApiUtils.success(
+                joinList.getTotalPages(),
+                joinReqListDTO.listOf(joinList.getContent()))
+        );
     }
 
     @PostMapping("/users/{id}/auth")
@@ -59,14 +61,19 @@ public class AdminController {
 
     @GetMapping("/annual")
     public ResponseEntity<?> findAnnualList(Pageable pageable){
-        final List<Schedule> scheduleList = scheduleService.findAnnualList(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(AdminAnnualListDTO.listOf(scheduleList)));
+        final Page<Schedule> scheduleList = scheduleService.findAnnualList(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                scheduleList.getTotalPages(),
+                AdminAnnualListDTO.listOf(scheduleList.getContent()))
+        );
     }
 
     @GetMapping("/duty")
     public ResponseEntity<?> findDutyList(Pageable pageable){
-        final List<Schedule> scheduleList = scheduleService.findDutyList(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(DutyListDTO.listOf(scheduleList)));
+        final Page<Schedule> scheduleList = scheduleService.findDutyList(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                scheduleList.getTotalPages(),
+                DutyListDTO.listOf(scheduleList.getContent())));
     }
 
     @PostMapping("/{id}/evaluation")
