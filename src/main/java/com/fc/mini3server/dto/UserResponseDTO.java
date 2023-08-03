@@ -62,7 +62,7 @@ public class UserResponseDTO {
                 user.getUpdatedAt());
     }
 
-    public static List<UserResponseDTO> listOf(List<User> users){
-        return users.stream().map(UserResponseDTO::of).collect(Collectors.toList());
-    }
+//    public static List<UserResponseDTO> listOf(List<User> users){
+//        return users.stream().map(UserResponseDTO::of).collect(Collectors.toList());
+//    }
 }

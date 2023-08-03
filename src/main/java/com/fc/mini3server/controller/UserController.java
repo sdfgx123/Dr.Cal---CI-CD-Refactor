@@ -73,9 +73,9 @@ public class UserController {
         return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.of((user))));
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> findAll(){
-        final List<User> allUsers = userService.findAll();
-        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.listOf(allUsers)));
-    }
+//    @GetMapping("/users")
+//    public ResponseEntity<?> findAll(){
+//        final List<User> allUsers = userService.findAll();
+//        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.listOf(allUsers)));
+//    }
 }
