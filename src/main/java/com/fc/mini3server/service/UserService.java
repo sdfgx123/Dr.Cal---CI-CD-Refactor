@@ -141,8 +141,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Page<User> findAll(Pageable pageable){
-        return userRepository.findAllByOrderByIdDesc(pageable);
+    public Page<User> findAllUserListAdmin(Pageable pageable){
+        return userRepository.findByStatusNot(StatusEnum.NOTAPPROVED, pageable);
+    }
+
+    public Page<User> findAllJoinUserListAdmin(Pageable pageable) {
+        return userRepository.findByStatusIs(StatusEnum.NOTAPPROVED, pageable);
     }
 
     @Transactional

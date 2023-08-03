@@ -7,6 +7,7 @@ import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +25,18 @@ public class AdminController {
     private final UserService userService;
     private final ScheduleService scheduleService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> findAll(Pageable pageable) {
-        final List<User> userList = userService.findAll(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(AdminUserListDTO.listOf(userList)));
+    @GetMapping("/users")
+    public ResponseEntity<?> findAllUsers(Pageable pageable) {
+        final Page<User> userList = userService.findAllUserListAdmin(pageable);
+        return ResponseEntity.ok(ApiUtils.success(userList.getTotalPages(),
+                AdminUserListDTO.listOf(userList.getContent())));
+    }
+
+    @GetMapping("/register")
+    public ResponseEntity<?> joinUserList(Pageable pageable) {
+        final Page<User> joinList = userService.findAllJoinUserListAdmin(pageable);
+        return ResponseEntity.ok(ApiUtils.success(joinList.getTotalPages(),
+                joinReqListDTO.listOf(joinList.getContent())));
     }
 
     @PostMapping("/users/{id}/auth")
