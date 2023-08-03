@@ -104,4 +104,15 @@ public class UserRequestDTO {
         @Pattern(regexp = "^.{8,20}$", message = "비밀번호 형식이 올바르지 않습니다. 비밀번호는 8자 이상 20자 미만으로 작성하십시오.")
         private String new_password;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class updateUserDTO {
+        private String name;
+        private Long deptId;
+        private String phone;
+        private String profileImageUrl;
+    }
 }
