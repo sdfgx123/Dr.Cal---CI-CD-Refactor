@@ -34,11 +34,13 @@ import static com.fc.mini3server.dto.AdminRequestDTO.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
+
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -110,7 +112,7 @@ public class UserService {
 
     }
 
-    private User getUser() {
+    public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication : " + authentication);
         if (authentication == null) {
@@ -121,14 +123,35 @@ public class UserService {
         }
         Long id = ((PrincipalUserDetail) authentication.getPrincipal()).getUser().getId();
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new Exception400("입력한 비밀번호와 일치하는 회원이 없습니다."));
+                .orElseThrow(() -> new Exception400("토큰 정보와 일치하는 회원이 없습니다."));
         return user;
-//        return ((PrincipalUserDetail) authentication.getPrincipal()).getUser();
     }
 
     private void validateOldPassword(User user, String oldPassword) {
         if (! passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new Exception400("입력하신 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    public void updateUserProc(UserRequestDTO.updateUserDTO updateUserDTO) {
+        User user = getUser();
+        setUpdatedUser(user, updateUserDTO);
+    }
+
+    private void setUpdatedUser(User user, UserRequestDTO.updateUserDTO updateUserDTO) {
+        if (updateUserDTO.getName() != null) {
+            user.setName(updateUserDTO.getName());
+        }
+        if (updateUserDTO.getDeptId() != null) {
+            Dept dept = deptRepository.findById(updateUserDTO.getDeptId())
+                    .orElseThrow(() -> new Exception400("제공한 dept를 통해 찾을 수 있는 부서가 없습니다."));
+            user.setDept(dept);
+        }
+        if (updateUserDTO.getPhone() != null) {
+            user.setPhone(updateUserDTO.getPhone());
+        }
+        if (updateUserDTO.getProfileImageUrl() != null) {
+            user.setProfileImageUrl(updateUserDTO.getProfileImageUrl());
         }
     }
 
