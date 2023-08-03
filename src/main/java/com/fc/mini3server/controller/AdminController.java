@@ -7,11 +7,10 @@ import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
@@ -24,10 +23,22 @@ public class AdminController {
     private final UserService userService;
     private final ScheduleService scheduleService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> findAll(Pageable pageable) {
-        final List<User> userList = userService.findAll(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(AdminUserListDTO.listOf(userList)));
+    @GetMapping("/users")
+    public ResponseEntity<?> findAllUsers(Pageable pageable) {
+        final Page<User> userList = userService.findAllUserListAdmin(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                userList.getTotalPages(),
+                AdminUserListDTO.listOf(userList.getContent()))
+        );
+    }
+
+    @GetMapping("/register")
+    public ResponseEntity<?> joinUserList(Pageable pageable) {
+        final Page<User> joinList = userService.findAllJoinUserListAdmin(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                joinList.getTotalPages(),
+                joinReqListDTO.listOf(joinList.getContent()))
+        );
     }
 
     @PostMapping("/users/{id}/auth")
@@ -36,22 +47,33 @@ public class AdminController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @PostMapping("/users/{id}/status")
-    public ResponseEntity<?> editStatus(@PathVariable Long id, @RequestBody editStatusDTO requestDTO){
-        userService.updateUserStatus(id, requestDTO);
+    @PostMapping("/users/{id}/approve")
+    public ResponseEntity<?> userApprove(@PathVariable Long id){
+        userService.approveUser(id);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @PostMapping("/users/{id}/retire")
+    public ResponseEntity<?> userRetire(@PathVariable Long id){
+        userService.retireUser(id);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @GetMapping("/annual")
     public ResponseEntity<?> findAnnualList(Pageable pageable){
-        final List<Schedule> scheduleList = scheduleService.findAnnualList(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(AdminAnnualListDTO.listOf(scheduleList)));
+        final Page<Schedule> scheduleList = scheduleService.findAnnualList(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                scheduleList.getTotalPages(),
+                AdminAnnualListDTO.listOf(scheduleList.getContent()))
+        );
     }
 
     @GetMapping("/duty")
     public ResponseEntity<?> findDutyList(Pageable pageable){
-        final List<Schedule> scheduleList = scheduleService.findDutyList(pageable).getContent();
-        return ResponseEntity.ok(ApiUtils.success(DutyListDTO.listOf(scheduleList)));
+        final Page<Schedule> scheduleList = scheduleService.findDutyList(pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                scheduleList.getTotalPages(),
+                DutyListDTO.listOf(scheduleList.getContent())));
     }
 
     @PostMapping("/{id}/evaluation")

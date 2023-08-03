@@ -1,5 +1,6 @@
 package com.fc.mini3server.repository;
 
+import com.fc.mini3server.domain.StatusEnum;
 import com.fc.mini3server.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,5 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findTopByOrderByEmpNoDesc();
   
-    Page<User> findAllByOrderByIdDesc(Pageable pageable);
+    Page<User> findByStatusNot(StatusEnum status, Pageable pageable);
+
+    Page<User> findByStatusIs(StatusEnum status, Pageable pageable);
 }
