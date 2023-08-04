@@ -40,7 +40,7 @@ public class UserController {
 
         log.info("JWT Token provided : " + jwtToken);
 
-        return ResponseEntity.ok().headers(headers).body(null);
+        return ResponseEntity.ok().headers(headers).body(ApiUtils.success(null));
     }
 
     @PostMapping("/logout")
