@@ -113,6 +113,6 @@ public class UserRequestDTO {
         private String name;
         private Long deptId;
         private String phone;
-        private String profileImageUrl;
+        private String image;
     }
 }
