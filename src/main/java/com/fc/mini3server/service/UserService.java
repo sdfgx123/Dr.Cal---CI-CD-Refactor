@@ -51,7 +51,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String FILE_DIR = "./images/";
+    private static final String FILE_DIR = "http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com/images/";
     private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
@@ -184,7 +184,7 @@ public class UserService {
     private String initiateFileName() {
         LocalDateTime currentTime = LocalDateTime.now();
         String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        return "uploadedFile_" + timeStamp;
+        return timeStamp;
     }
 
     public User findById(Long id) {
