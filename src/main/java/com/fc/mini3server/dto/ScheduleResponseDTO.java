@@ -40,18 +40,4 @@ public class ScheduleResponseDTO {
             return scheduleList.stream().map(ApprovedScheduleListDTO::of).collect(Collectors.toList());
         }
     }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class ScheduleDTO {
-
-        private Long id;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private String reason;
-        private CategoryEnum category;
-        private EvaluationEnum evaluation;
-
-    }
 }

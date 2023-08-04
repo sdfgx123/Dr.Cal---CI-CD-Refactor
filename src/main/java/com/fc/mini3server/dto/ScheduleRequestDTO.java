@@ -6,7 +6,7 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ScheduleRequestDTO {
 
     @Data
@@ -21,18 +21,16 @@ public class ScheduleRequestDTO {
         @NotNull
         private String reason;
 
-        public Schedule toEntity(User user, Hospital hospital) {
-            return Schedule.builder()
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .reason(reason)
-                    .category(CategoryEnum.ANNUAL)
-                    .user(user)
-                    .hospital(hospital)
-                    .evaluation(EvaluationEnum.STANDBY)
-                    .build();
-        }
+        private User user;
 
     }
 
+    @Data
+    public static class createDutyDTO {
+
+        @NotNull
+        private LocalDate startDate;
+
+        private User user;
+    }
 }
