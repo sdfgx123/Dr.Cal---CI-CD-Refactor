@@ -4,12 +4,12 @@ import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.LevelEnum;
 import com.fc.mini3server.domain.Schedule;
-import com.fc.mini3server.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +83,32 @@ public class ScheduleResponseDTO {
             return new dutyScheduleDTO(schedule.getId(), schedule.getUser().getId(), schedule.getUser().getName(),
                     schedule.getUser().getDept().getName(), schedule.getUser().getLevel(), schedule.getUser().getPhone(),
                     schedule.getUser().getEmail(), schedule.getUser().getProfileImageUrl());
+        }
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class ScheduleReqListDTO {
+        private Long id;
+        private Long userId;
+        private Long hospitalId;
+        private CategoryEnum category;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private EvaluationEnum evaluation;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        public static ScheduleReqListDTO of(Schedule schedule){
+            return new ScheduleReqListDTO(schedule.getId(), schedule.getUser().getId(), schedule.getHospital().getId(),
+                    schedule.getCategory(), schedule.getStartDate(), schedule.getEndDate(),
+                    schedule.getEvaluation(), schedule.getCreatedAt(), schedule.getUpdatedAt()
+                    );
+        }
+
+        public static List<ScheduleReqListDTO> listOf(List<Schedule> scheduleList) {
+            return scheduleList.stream().map(ScheduleReqListDTO::of).collect(Collectors.toList());
         }
     }
 }

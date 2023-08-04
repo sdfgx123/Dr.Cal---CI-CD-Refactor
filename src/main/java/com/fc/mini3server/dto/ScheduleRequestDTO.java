@@ -1,6 +1,5 @@
 package com.fc.mini3server.dto;
 
-import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

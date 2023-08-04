@@ -17,5 +17,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Page<Schedule> findByEvaluation(EvaluationEnum evaluation, Pageable pageable);
     List<Schedule> findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate, LocalDate endDate);
     Optional<Schedule> findByEvaluationAndCategoryAndStartDate(EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate);
-
+    List<Schedule> findByUserId(Long userId);
 }
