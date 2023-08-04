@@ -2,7 +2,6 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
-import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.ScheduleRequestDTO;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final HospitalRepository hospitalRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final HospitalRepository hospitalRepository;
 
     @Autowired
     public ScheduleService(UserService userService, ScheduleRepository scheduleRepository, HospitalRepository hospitalRepository, UserRepository userRepository) {
