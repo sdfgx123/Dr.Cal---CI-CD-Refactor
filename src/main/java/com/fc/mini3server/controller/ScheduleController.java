@@ -1,5 +1,6 @@
 package com.fc.mini3server.controller;
 
+import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.Schedule;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +33,20 @@ public class ScheduleController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<?> getAnnualListByDate(@RequestParam("chooseDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate chooseDate,
+    public ResponseEntity<?> getScheduleByDate(@RequestParam("chooseDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate chooseDate,
                                                  @RequestParam("category") CategoryEnum category){
-        List<Schedule> scheduleList = scheduleService.findAllScheduleListByDate(new annualListReqDTO(chooseDate, category));
-        return ResponseEntity.ok(ApiUtils.success(ScheduleResponseDTO.annualListByDateDTO.listOf(scheduleList)));
+        getScheduleReqDTO requestDTO = new getScheduleReqDTO(chooseDate, category);
+
+        if(category.equals(CategoryEnum.ANNUAL)){
+            List<Schedule> scheduleList = scheduleService.findAllScheduleListByDate(requestDTO);
+            return ResponseEntity.ok(ApiUtils.success(ScheduleResponseDTO.annualListByDateDTO.listOf(scheduleList)));
+        }
+
+        if(category.equals(CategoryEnum.DUTY)){
+            Schedule schedule = scheduleService.findByDutyScheduleByDate(requestDTO);
+            return ResponseEntity.ok(ApiUtils.success(ScheduleResponseDTO.dutyScheduleDTO.of(schedule)));
+        }
+
+        return ResponseEntity.ok(ApiUtils.error(Message.METHOD_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST));
     }
 }

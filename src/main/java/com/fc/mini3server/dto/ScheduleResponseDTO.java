@@ -65,4 +65,24 @@ public class ScheduleResponseDTO {
             return scheduleList.stream().map(annualListByDateDTO::of).collect(Collectors.toList());
         }
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class dutyScheduleDTO {
+        private Long id;
+        private Long userId;
+        private String username;
+        private String deptName;
+        private LevelEnum level;
+        private String phone;
+        private String email;
+        private String profileImageUrl;
+
+        public static dutyScheduleDTO of(Schedule schedule){
+            return new dutyScheduleDTO(schedule.getId(), schedule.getUser().getId(), schedule.getUser().getName(),
+                    schedule.getUser().getDept().getName(), schedule.getUser().getLevel(), schedule.getUser().getPhone(),
+                    schedule.getUser().getEmail(), schedule.getUser().getProfileImageUrl());
+        }
+    }
 }

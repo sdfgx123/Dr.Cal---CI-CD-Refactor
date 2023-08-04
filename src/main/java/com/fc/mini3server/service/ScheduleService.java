@@ -2,6 +2,7 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
+import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.Schedule;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
 
@@ -44,8 +46,16 @@ public class ScheduleService {
                 .map(ScheduleResponseDTO.ApprovedScheduleListDTO::of);
     }
 
-    public List<Schedule> findAllScheduleListByDate(annualListReqDTO requestDTO) {
+    public List<Schedule> findAllScheduleListByDate(getScheduleReqDTO requestDTO) {
         return scheduleRepository.findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
                 EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
+    }
+
+    public Schedule findByDutyScheduleByDate(getScheduleReqDTO requestDTO) {
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDate(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
+        ).orElseThrow(
+                () -> new Exception404("금일 당직 인원이 없습니다.")
+        );
     }
 }

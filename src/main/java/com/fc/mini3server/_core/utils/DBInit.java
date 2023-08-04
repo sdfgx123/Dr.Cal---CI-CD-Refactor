@@ -334,7 +334,7 @@ public class DBInit {
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 4))
                     .endDate(LocalDate.of(2023, 8, 4))
-                    .evaluation(EvaluationEnum.STANDBY)
+                    .evaluation(EvaluationEnum.APPROVED)
                     .build();
 
             Schedule schedule22 = Schedule.builder()
@@ -343,7 +343,7 @@ public class DBInit {
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 5))
                     .endDate(LocalDate.of(2023, 8, 5))
-                    .evaluation(EvaluationEnum.STANDBY)
+                    .evaluation(EvaluationEnum.APPROVED)
                     .build();
 
             scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,

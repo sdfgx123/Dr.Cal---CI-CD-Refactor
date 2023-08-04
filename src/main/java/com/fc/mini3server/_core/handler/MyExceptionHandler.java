@@ -73,7 +73,7 @@ public class MyExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiUtils.ApiResult<?>> dataConversionsFailedException(MethodArgumentTypeMismatchException e){
-        return new ResponseEntity<>(ApiUtils.error(Message.INVALID_DATE_FORMAT_PARAMETER, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ApiUtils.error(Message.METHOD_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
