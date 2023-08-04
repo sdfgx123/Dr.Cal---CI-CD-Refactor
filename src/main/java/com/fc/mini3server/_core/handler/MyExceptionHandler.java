@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -68,6 +69,11 @@ public class MyExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiUtils.ApiResult<?>> dataIntegrityViolationException(DataIntegrityViolationException e) {
         return new ResponseEntity<>(ApiUtils.error("중복된 이메일 입니다. 다른 이메일을 사용하십시오.", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiUtils.ApiResult<?>> dataConversionsFailedException(MethodArgumentTypeMismatchException e){
+        return new ResponseEntity<>(ApiUtils.error(Message.INVALID_DATE_FORMAT_PARAMETER, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
