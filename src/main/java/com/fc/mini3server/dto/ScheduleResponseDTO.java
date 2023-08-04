@@ -45,4 +45,24 @@ public class ScheduleResponseDTO {
             return scheduleList.stream().map(ApprovedScheduleListDTO::of).collect(Collectors.toList());
         }
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class annualListByDateDTO {
+        private Long id;
+        private String username;
+        private String deptName;
+        private LevelEnum level;
+        private String phone;
+
+        public static annualListByDateDTO of(Schedule schedule){
+            return new annualListByDateDTO(schedule.getId(), schedule.getUser().getName(),
+                    schedule.getUser().getDept().getName(), schedule.getUser().getLevel(), schedule.getUser().getPhone());
+        }
+
+        public static List<annualListByDateDTO> listOf(List<Schedule> scheduleList) {
+            return scheduleList.stream().map(annualListByDateDTO::of).collect(Collectors.toList());
+        }
+    }
 }

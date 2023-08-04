@@ -14,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
+
 @RequiredArgsConstructor
 @Service
 public class ScheduleService {
@@ -38,5 +42,10 @@ public class ScheduleService {
     public Page<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule(Pageable pageable) {
         return scheduleRepository.findByEvaluation(EvaluationEnum.APPROVED, pageable)
                 .map(ScheduleResponseDTO.ApprovedScheduleListDTO::of);
+    }
+
+    public List<Schedule> findAllScheduleListByDate(annualListReqDTO requestDTO) {
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
     }
 }
