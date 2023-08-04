@@ -2,22 +2,30 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
+import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
 import com.fc.mini3server.repository.ScheduleRepository;
+import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
+
 @RequiredArgsConstructor
 @Service
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+
     public Page<Schedule> findAnnualList(Pageable pageable) {
         return scheduleRepository.findByCategoryIsOrderById(CategoryEnum.ANNUAL, pageable);
     }
@@ -38,5 +46,26 @@ public class ScheduleService {
     public Page<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule(Pageable pageable) {
         return scheduleRepository.findByEvaluation(EvaluationEnum.APPROVED, pageable)
                 .map(ScheduleResponseDTO.ApprovedScheduleListDTO::of);
+    }
+
+    public List<Schedule> findAllScheduleListByDate(getScheduleReqDTO requestDTO) {
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
+    }
+
+    public Schedule findByDutyScheduleByDate(getScheduleReqDTO requestDTO) {
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDate(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
+        ).orElseThrow(
+                () -> new Exception404("금일 당직 인원이 없습니다.")
+        );
+    }
+
+    public List<Schedule> findAllRequestSchedule(Long id) {
+        userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
+        );
+
+        return scheduleRepository.findByUserId(id);
     }
 }
