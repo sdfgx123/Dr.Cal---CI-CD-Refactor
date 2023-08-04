@@ -6,6 +6,7 @@ import com.fc.mini3server.domain.Hospital;
 import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.User;
 import com.fc.mini3server.dto.ScheduleRequestDTO;
+import com.fc.mini3server.dto.ScheduleResponseDTO;
 import com.fc.mini3server.service.ScheduleService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,17 @@ public class ScheduleController {
     }
 
     @PostMapping("/create/annual")
-    public ResponseEntity<?> createAnnualSchedule(@RequestBody ScheduleRequestDTO.createAnnualDTO createAnnualDTO, @AuthenticationPrincipal User user, Hospital hospital) {
-        Schedule createdSchedule = scheduleService.createSchedule(createAnnualDTO, user, hospital);
+    public ResponseEntity<ApiUtils.ApiResult<Schedule>> createAnnualSchedule(@RequestBody @Valid ScheduleRequestDTO.createAnnualDTO createAnnualDTO,
+                                                                             Error error) {
+        scheduleService.createAnnualSchedule(createAnnualDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @PostMapping("/create/duty")
+    public ResponseEntity<ApiUtils.ApiResult<Schedule>> createDutySchedule(@RequestBody @Valid ScheduleRequestDTO.createDutyDTO createDutyDTO,
+                                                                             Error error) {
+        scheduleService.createDutySchedule(createDutyDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
 }
