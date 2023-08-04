@@ -4,10 +4,7 @@ import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.LevelEnum;
 import com.fc.mini3server.domain.Schedule;
-import com.fc.mini3server.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,5 +39,19 @@ public class ScheduleResponseDTO {
         public static List<ApprovedScheduleListDTO> listOf(List<Schedule> scheduleList) {
             return scheduleList.stream().map(ApprovedScheduleListDTO::of).collect(Collectors.toList());
         }
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    public static class ScheduleDTO {
+
+        private Long id;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private String reason;
+        private CategoryEnum category;
+        private EvaluationEnum evaluation;
+
     }
 }
