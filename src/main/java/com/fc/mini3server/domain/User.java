@@ -57,8 +57,6 @@ public class User {
 
     private int duty;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String profileImageUrl;
 
     private LocalDate hiredDate;
