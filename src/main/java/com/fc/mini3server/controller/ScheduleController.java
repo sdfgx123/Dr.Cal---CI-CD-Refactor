@@ -20,6 +20,6 @@ public class ScheduleController {
 
     @GetMapping("/")
     public ResponseEntity<?> getApprovedSchedules(Pageable pageable) {
-        return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule(pageable)));
+        return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule(pageable).getContent()));
     }
 }

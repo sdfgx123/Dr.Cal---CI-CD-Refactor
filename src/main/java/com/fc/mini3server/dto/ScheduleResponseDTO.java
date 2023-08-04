@@ -22,7 +22,8 @@ public class ScheduleResponseDTO {
         private Long id;
         private String name;
         private LevelEnum level;
-        private Long hospitalId;
+        private String hospitalName;
+        private String deptName;
         private CategoryEnum category;
         private LocalDate startDate;
         private LocalDate endDate;
@@ -34,7 +35,8 @@ public class ScheduleResponseDTO {
                     schedule.getId(),
                     schedule.getUser().getName(),
                     schedule.getUser().getLevel(),
-                    schedule.getUser().getHospital().getId(),
+                    schedule.getUser().getHospital().getName(),
+                    schedule.getUser().getDept().getName(),
                     schedule.getCategory(), schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
             return approvedScheduleListDTO;
         }
