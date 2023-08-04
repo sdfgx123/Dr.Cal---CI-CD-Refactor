@@ -300,6 +300,33 @@ public class DBInit {
                     .evaluation(EvaluationEnum.STANDBY)
                     .reason("징검다리 휴가")
                     .build();
+            Schedule schedule3 = Schedule.builder()
+                    .user(user3)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 3))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule4 = Schedule.builder()
+                    .user(user4)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 4))
+                    .endDate(LocalDate.of(2023, 8, 4))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule5 = Schedule.builder()
+                    .user(user5)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 5))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
 
             Schedule schedule21 = Schedule.builder()
                     .user(user1)
@@ -319,7 +346,7 @@ public class DBInit {
                     .evaluation(EvaluationEnum.STANDBY)
                     .build();
 
-            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2,
+            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,
                     schedule21, schedule22));
         };
     }
