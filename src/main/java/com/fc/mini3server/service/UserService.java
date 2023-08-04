@@ -3,6 +3,7 @@ package com.fc.mini3server.service;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
+import com.fc.mini3server._core.handler.exception.Exception500;
 import com.fc.mini3server._core.security.JwtTokenProvider;
 import com.fc.mini3server._core.security.PrincipalUserDetail;
 import com.fc.mini3server.domain.*;
@@ -24,7 +25,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
@@ -42,6 +50,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private static final String FILE_DIR = "./images/";
+    private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
         try {
@@ -148,9 +159,32 @@ public class UserService {
         if (updateUserDTO.getPhone() != null) {
             user.setPhone(updateUserDTO.getPhone());
         }
-        if (updateUserDTO.getProfileImageUrl() != null) {
-            user.setProfileImageUrl(updateUserDTO.getProfileImageUrl());
+        if (updateUserDTO.getImage() != null) {
+            writeImageOnServer(user, updateUserDTO);
         }
+    }
+
+    private void writeImageOnServer(User user, UserRequestDTO.updateUserDTO updateUserDTO) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(updateUserDTO.getImage());
+
+            if (decodedBytes.length > MAX_FILE_SIZE) {
+                throw new Exception500("업로드한 이미지의 크기가 1MB를 초과합니다.");
+            }
+
+            String fileName = initiateFileName();
+            Path destination = Paths.get(FILE_DIR + fileName);
+            Files.write(destination, decodedBytes);
+            user.setProfileImageUrl(FILE_DIR + fileName);
+        } catch (IOException e) {
+            throw new Exception500("이미지 파일 저장 중 문제가 발생했습니다.");
+        }
+    }
+
+    private String initiateFileName() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return "uploadedFile_" + timeStamp;
     }
 
     public User findById(Long id) {
