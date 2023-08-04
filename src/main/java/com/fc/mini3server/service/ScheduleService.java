@@ -2,6 +2,7 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
+import com.fc.mini3server._core.handler.exception.Exception403;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.ScheduleRequestDTO;
@@ -103,5 +104,22 @@ public class ScheduleService {
         } catch (IllegalArgumentException e) {
             throw new Exception400("요청 형식이 잘못 되었습니다. 당직 일자를 제대로 입력 하였는지 확인하십시오.");
         }
+    }
+
+    @Transactional
+    public void deleteSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid schedule id: " + id));
+
+        /*
+        if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
+            throw new Exception403("접근 권한이 없습니다.");
+        }
+
+         */
+        if (EvaluationEnum.CANCELED.equals(schedule.getEvaluation())) {
+            throw new IllegalStateException("이미 취소된 스케줄 입니다.");
+        }
+        scheduleRepository.updateEvaluationToCanceled(id);
     }
 }

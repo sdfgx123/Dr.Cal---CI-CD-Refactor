@@ -37,4 +37,10 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @PostMapping("/annual/delete")
+    public ResponseEntity<?> deleteAnnualSchedule(@RequestParam Long id) {
+        scheduleService.deleteSchedule(id);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
 }
