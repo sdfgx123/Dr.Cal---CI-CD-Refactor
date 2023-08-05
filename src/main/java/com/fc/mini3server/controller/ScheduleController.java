@@ -58,6 +58,18 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(ScheduleReqListDTO.listOf(scheduleList)));
     }
 
+    @PostMapping("annual/{id}/update")
+    public ResponseEntity<?> updateAnnualSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO.createAnnualDTO updateDTO) {
+        scheduleService.updateAnnual(id, updateDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @PostMapping("duty/{id}/update")
+    public ResponseEntity<?> updateDutySchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO.createDutyDTO updateDTO) {
+        scheduleService.updateDuty(id, updateDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
     @PostMapping("/create/annual")
     public ResponseEntity<ApiUtils.ApiResult<Schedule>> createAnnualSchedule(@RequestBody @Valid ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
         scheduleService.createAnnualSchedule(createAnnualDTO);
