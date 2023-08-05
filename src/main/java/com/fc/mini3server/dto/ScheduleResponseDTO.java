@@ -4,9 +4,7 @@ import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.LevelEnum;
 import com.fc.mini3server.domain.Schedule;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
