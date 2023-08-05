@@ -111,6 +111,52 @@ public class ScheduleService {
     }
 
     @Transactional
+    public Schedule updateAnnual(Long id, ScheduleRequestDTO.createAnnualDTO updateDTO) {
+        try {
+            Schedule schedule = scheduleRepository.findById(id)
+                    .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
+
+            if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
+                throw new Exception403("접근 권한이 없습니다.");
+            }
+
+            schedule.setStartDate(updateDTO.getStartDate());
+            schedule.setEndDate(updateDTO.getEndDate());
+            schedule.setReason(updateDTO.getReason());
+            schedule.setEvaluation(EvaluationEnum.STANDBY);
+
+            Schedule updatedSchedule = scheduleRepository.save(schedule);
+            return updatedSchedule;
+
+        } catch (IllegalArgumentException e) {
+            throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
+        }
+    }
+
+    @Transactional
+    public Schedule updateDuty(Long id, ScheduleRequestDTO.createDutyDTO updateDTO) {
+        try {
+            Schedule schedule = scheduleRepository.findById(id)
+                    .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
+
+            if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
+                throw new Exception403("접근 권한이 없습니다.");
+            }
+
+            schedule.setStartDate(updateDTO.getStartDate());
+            schedule.setEndDate(updateDTO.getStartDate());
+            schedule.setEvaluation(EvaluationEnum.STANDBY);
+
+            Schedule updatedSchedule = scheduleRepository.save(schedule);
+            return updatedSchedule;
+
+        } catch (IllegalArgumentException e) {
+            throw new Exception400("요청 형식이 잘못 되었습니다. 당직 일자를 제대로 입력 하였는지 확인하십시오.");
+        }
+    }
+
+
+    @Transactional
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid schedule id: " + id));
