@@ -40,7 +40,7 @@ public class UserController {
 
         log.info("JWT Token provided : " + jwtToken);
 
-        return ResponseEntity.ok().headers(headers).body(null);
+        return ResponseEntity.ok().headers(headers).body(ApiUtils.success(null));
     }
 
     @PostMapping("/logout")
@@ -51,7 +51,20 @@ public class UserController {
     @PostMapping("/updatePassword")
     public ResponseEntity<ApiUtils.ApiResult<String>> updatePassword(@RequestBody @Valid UserRequestDTO.updatePasswordDTO updatePasswordDTO, Errors errors) {
         userService.updatePasswordProc(updatePasswordDTO);
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @GetMapping("/myPage")
+    public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO>> myPage() {
+        User user = userService.getUser();
+        UserResponseDTO responseDTO = UserResponseDTO.of(user);
+        return ResponseEntity.ok(ApiUtils.success(responseDTO));
+    }
+
+    @PostMapping("/editUser")
+    public ResponseEntity<ApiUtils.ApiResult<String>> updateUser(@RequestBody @Valid UserRequestDTO.updateUserDTO updateUserDTO, Errors errors) {
+        userService.updateUserProc(updateUserDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @GetMapping("/users/{id}")
@@ -60,9 +73,9 @@ public class UserController {
         return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.of((user))));
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> findAll(){
-        final List<User> allUsers = userService.findAll();
-        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.listOf(allUsers)));
-    }
+//    @GetMapping("/users")
+//    public ResponseEntity<?> findAll(){
+//        final List<User> allUsers = userService.findAll();
+//        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.listOf(allUsers)));
+//    }
 }

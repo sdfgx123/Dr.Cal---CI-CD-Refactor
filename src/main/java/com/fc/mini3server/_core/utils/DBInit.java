@@ -230,7 +230,56 @@ public class DBInit {
                     .resignedDate(null)
                     .build();
 
-            userRepository.saveAll(Arrays.asList(user1, user2, user3));
+            User user4 = User.builder()
+                    .empNo(++empNo)
+                    .name("장윤복")
+                    .email("younbok@doctorcal.com")
+                    .password("1234")
+                    .phone("01011115228")
+                    .hospital(hospital1)
+                    .dept(dept10)
+                    .level(LevelEnum.PK)
+                    .auth(AuthEnum.USER)
+                    .status(StatusEnum.NOTAPPROVED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(2023,8,3))
+                    .resignedDate(null)
+                    .build();
+            User user5 = User.builder()
+                    .empNo(++empNo)
+                    .name("장홍도")
+                    .email("hongdojjang@doctorcal.com")
+                    .password("1234")
+                    .phone("01022225228")
+                    .hospital(hospital1)
+                    .dept(dept10)
+                    .level(LevelEnum.PK)
+                    .auth(AuthEnum.USER)
+                    .status(StatusEnum.NOTAPPROVED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(2023,8,3))
+                    .resignedDate(null)
+                    .build();
+            User user6 = User.builder()
+                    .empNo(++empNo)
+                    .name("정로사")
+                    .email("losajeong@doctorcal.com")
+                    .password("1234")
+                    .phone("01024425123")
+                    .hospital(hospital1)
+                    .dept(dept10)
+                    .level(LevelEnum.FELLOW)
+                    .auth(AuthEnum.USER)
+                    .status(StatusEnum.RETIRED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(1998,1,2))
+                    .resignedDate(LocalDate.of(2020, 12,30))
+                    .build();
+
+            userRepository.saveAll(Arrays.asList(user1, user2, user3, user4, user5, user6));
 
             Schedule schedule1 = Schedule.builder()
                     .user(user1)
@@ -251,6 +300,33 @@ public class DBInit {
                     .evaluation(EvaluationEnum.STANDBY)
                     .reason("징검다리 휴가")
                     .build();
+            Schedule schedule3 = Schedule.builder()
+                    .user(user3)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 3))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule4 = Schedule.builder()
+                    .user(user4)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 4))
+                    .endDate(LocalDate.of(2023, 8, 4))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule5 = Schedule.builder()
+                    .user(user5)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 5))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
 
             Schedule schedule21 = Schedule.builder()
                     .user(user1)
@@ -258,7 +334,7 @@ public class DBInit {
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 4))
                     .endDate(LocalDate.of(2023, 8, 4))
-                    .evaluation(EvaluationEnum.STANDBY)
+                    .evaluation(EvaluationEnum.APPROVED)
                     .build();
 
             Schedule schedule22 = Schedule.builder()
@@ -267,10 +343,10 @@ public class DBInit {
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 5))
                     .endDate(LocalDate.of(2023, 8, 5))
-                    .evaluation(EvaluationEnum.STANDBY)
+                    .evaluation(EvaluationEnum.APPROVED)
                     .build();
 
-            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2,
+            scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,
                     schedule21, schedule22));
         };
     }

@@ -1,9 +1,9 @@
 package com.fc.mini3server.service;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
+import com.fc.mini3server._core.handler.exception.Exception500;
 import com.fc.mini3server._core.security.JwtTokenProvider;
 import com.fc.mini3server._core.security.PrincipalUserDetail;
 import com.fc.mini3server.domain.*;
@@ -25,23 +25,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
+
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private static final String FILE_DIR = "/images/";
+    private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
         try {
@@ -110,7 +121,7 @@ public class UserService {
 
     }
 
-    private User getUser() {
+    public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication : " + authentication);
         if (authentication == null) {
@@ -121,15 +132,59 @@ public class UserService {
         }
         Long id = ((PrincipalUserDetail) authentication.getPrincipal()).getUser().getId();
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new Exception400("입력한 비밀번호와 일치하는 회원이 없습니다."));
+                .orElseThrow(() -> new Exception400("토큰 정보와 일치하는 회원이 없습니다."));
         return user;
-//        return ((PrincipalUserDetail) authentication.getPrincipal()).getUser();
     }
 
     private void validateOldPassword(User user, String oldPassword) {
         if (! passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new Exception400("입력하신 비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    public void updateUserProc(UserRequestDTO.updateUserDTO updateUserDTO) {
+        User user = getUser();
+        setUpdatedUser(user, updateUserDTO);
+    }
+
+    private void setUpdatedUser(User user, UserRequestDTO.updateUserDTO updateUserDTO) {
+        if (updateUserDTO.getName() != null) {
+            user.setName(updateUserDTO.getName());
+        }
+        if (updateUserDTO.getDeptId() != null) {
+            Dept dept = deptRepository.findById(updateUserDTO.getDeptId())
+                    .orElseThrow(() -> new Exception400("제공한 dept를 통해 찾을 수 있는 부서가 없습니다."));
+            user.setDept(dept);
+        }
+        if (updateUserDTO.getPhone() != null) {
+            user.setPhone(updateUserDTO.getPhone());
+        }
+        if (updateUserDTO.getImage() != null) {
+            writeImageOnServer(user, updateUserDTO);
+        }
+    }
+
+    private void writeImageOnServer(User user, UserRequestDTO.updateUserDTO updateUserDTO) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(updateUserDTO.getImage());
+
+            if (decodedBytes.length > MAX_FILE_SIZE) {
+                throw new Exception500("업로드한 이미지의 크기가 1MB를 초과합니다.");
+            }
+
+            String fileName = initiateFileName();
+            Path destination = Paths.get(FILE_DIR + fileName);
+            Files.write(destination, decodedBytes);
+            user.setProfileImageUrl(FILE_DIR + fileName);
+        } catch (IOException e) {
+            throw new Exception500("이미지 파일 저장 중 문제가 발생했습니다.");
+        }
+    }
+
+    private String initiateFileName() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return timeStamp;
     }
 
     public User findById(Long id) {
@@ -141,8 +196,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Page<User> findAll(Pageable pageable){
-        return userRepository.findAllByOrderByIdDesc(pageable);
+    public Page<User> findAllUserListAdmin(Pageable pageable){
+        return userRepository.findByStatusNot(StatusEnum.NOTAPPROVED, pageable);
+    }
+
+    public Page<User> findAllJoinUserListAdmin(Pageable pageable) {
+        return userRepository.findByStatusIs(StatusEnum.NOTAPPROVED, pageable);
     }
 
     @Transactional
@@ -154,10 +213,24 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserStatus(Long id, editStatusDTO requestDTO) {
+    public void approveUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
-        user.updateStatus(requestDTO.getStatus());
+        if (!user.getStatus().equals(StatusEnum.NOTAPPROVED))
+            throw new Exception400(Message.INVALID_USER_STATUS_NOT_APPROVED);
+
+        user.updateStatus(StatusEnum.APPROVED);
+    }
+
+    @Transactional
+    public void retireUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+
+        if (!user.getStatus().equals(StatusEnum.APPROVED))
+            throw new Exception400(Message.INVALID_USER_STATUS_APPROVED);
+
+        user.updateStatus(StatusEnum.RETIRED);
     }
 }
