@@ -4,6 +4,10 @@ import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception403;
 import com.fc.mini3server.domain.*;
+import com.fc.mini3server._core.handler.exception.Exception404;
+import com.fc.mini3server.domain.CategoryEnum;
+import com.fc.mini3server.domain.EvaluationEnum;
+import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.ScheduleRequestDTO;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
@@ -16,6 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
 
 @RequiredArgsConstructor
 @Service
@@ -58,12 +66,8 @@ public class ScheduleService {
 
     public Schedule createAnnualSchedule(ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
         try {
-            /*
-            User user = userService.getUser();
-            Long userId = user.getId();
-             */
 
-             User user = userRepository.findById(createAnnualDTO.getUser().getId())
+            User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createAnnualDTO.getUser().getId()));
 
             Schedule schedule = Schedule.builder()
@@ -86,7 +90,7 @@ public class ScheduleService {
     public Schedule createDutySchedule(ScheduleRequestDTO.createDutyDTO createDutyDTO) {
         try {
 
-            User user = userRepository.findById(createDutyDTO.getUser().getId())
+            User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createDutyDTO.getUser().getId()));
 
             Schedule schedule = Schedule.builder()
@@ -111,15 +115,36 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid schedule id: " + id));
 
-        /*
+
         if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
             throw new Exception403("접근 권한이 없습니다.");
         }
 
-         */
         if (EvaluationEnum.CANCELED.equals(schedule.getEvaluation())) {
             throw new IllegalStateException("이미 취소된 스케줄 입니다.");
         }
+
         scheduleRepository.updateEvaluationToCanceled(id);
+    }
+
+    public List<Schedule> findAllScheduleListByDate (getScheduleReqDTO requestDTO){
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
+    }
+
+    public Schedule findByDutyScheduleByDate (getScheduleReqDTO requestDTO){
+        return scheduleRepository.findByEvaluationAndCategoryAndStartDate(
+                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
+        ).orElseThrow(
+                () -> new Exception404("금일 당직 인원이 없습니다.")
+        );
+    }
+
+    public List<Schedule> findAllRequestSchedule (Long id){
+        userRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
+        );
+
+        return scheduleRepository.findByUserId(id);
     }
 }

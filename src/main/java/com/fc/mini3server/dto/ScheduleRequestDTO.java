@@ -30,7 +30,15 @@ public class ScheduleRequestDTO {
 
         @NotNull
         private LocalDate startDate;
-
         private User user;
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class getScheduleReqDTO {
+        private LocalDate chooseDate;
+        private CategoryEnum category;
+    }
 }
+
