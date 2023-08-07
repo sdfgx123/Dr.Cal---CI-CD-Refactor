@@ -110,12 +110,12 @@ public class UserService {
     }
 
     public void updatePasswordProc(UserRequestDTO.updatePasswordDTO updatePasswordDTO) {
-        log.info("old : " + updatePasswordDTO.getOld_password());
-        log.info("new : " + updatePasswordDTO.getNew_password());
+        log.info("old : " + updatePasswordDTO.getOldPassword());
+        log.info("new : " + updatePasswordDTO.getNewPassword());
         User user = getUser();
         log.info("user.password : " + user.getPassword());
-        validateOldPassword(user, updatePasswordDTO.getOld_password());
-        user.changePassword(updatePasswordDTO.getNew_password(), passwordEncoder);
+        validateOldPassword(user, updatePasswordDTO.getOldPassword());
+        user.changePassword(updatePasswordDTO.getNewPassword(), passwordEncoder);
         userRepository.save(user);
 
     }
