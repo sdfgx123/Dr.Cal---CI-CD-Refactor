@@ -6,13 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,21 +16,21 @@ import java.util.stream.Collectors;
 public class UserResponseDTO {
 
     private Long id;
-    private Long emp_no;
+    private Long empNo;
     private String name;
     private String email;
     private String phone;
-    private Long hospital_id;
-    private Long dept_id;
+    private Long hospitalId;
+    private Long deptId;
     private String level;
     private String auth;
     private String status;
     private int annual;
     private int duty;
-    private String profile_image_url;
-    private LocalDate hiredate;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private String profileImageUrl;
+    private LocalDate hireDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 
 
@@ -61,8 +56,4 @@ public class UserResponseDTO {
                 user.getCreatedAt(),
                 user.getUpdatedAt());
     }
-
-//    public static List<UserResponseDTO> listOf(List<User> users){
-//        return users.stream().map(UserResponseDTO::of).collect(Collectors.toList());
-//    }
 }

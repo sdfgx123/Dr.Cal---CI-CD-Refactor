@@ -33,7 +33,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.List;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
@@ -111,12 +110,12 @@ public class UserService {
     }
 
     public void updatePasswordProc(UserRequestDTO.updatePasswordDTO updatePasswordDTO) {
-        log.info("old : " + updatePasswordDTO.getOld_password());
-        log.info("new : " + updatePasswordDTO.getNew_password());
+        log.info("old : " + updatePasswordDTO.getOldPassword());
+        log.info("new : " + updatePasswordDTO.getNewPassword());
         User user = getUser();
         log.info("user.password : " + user.getPassword());
-        validateOldPassword(user, updatePasswordDTO.getOld_password());
-        user.changePassword(updatePasswordDTO.getNew_password(), passwordEncoder);
+        validateOldPassword(user, updatePasswordDTO.getOldPassword());
+        user.changePassword(updatePasswordDTO.getNewPassword(), passwordEncoder);
         userRepository.save(user);
 
     }
@@ -185,15 +184,6 @@ public class UserService {
         LocalDateTime currentTime = LocalDateTime.now();
         String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return timeStamp;
-    }
-
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
-    }
-
-    public List<User> findAll() {
-        return userRepository.findAll();
     }
 
     public Page<User> findAllUserListAdmin(Pageable pageable){

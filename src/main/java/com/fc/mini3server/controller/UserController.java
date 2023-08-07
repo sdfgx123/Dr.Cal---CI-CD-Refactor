@@ -14,7 +14,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Tag(name = "User", description = "유저 API")
 @Slf4j
@@ -66,16 +65,4 @@ public class UserController {
         userService.updateUserProc(updateUserDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
-
-    @GetMapping("/users/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id){
-        final User user = userService.findById(id);
-        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.of((user))));
-    }
-
-//    @GetMapping("/users")
-//    public ResponseEntity<?> findAll(){
-//        final List<User> allUsers = userService.findAll();
-//        return ResponseEntity.ok(ApiUtils.success(UserResponseDTO.listOf(allUsers)));
-//    }
 }
