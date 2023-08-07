@@ -16,7 +16,8 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    Page<Schedule> findByCategoryIsOrderById(CategoryEnum category, Pageable pageable);
+    @Query("SELECT s FROM schedule_tb s where s.category = :category ORDER BY CASE WHEN s.evaluation = 'STANDBY' THEN 1 ELSE 2 END")
+    Page<Schedule> findByCategoryIsOrderById(@Param("category") CategoryEnum category, Pageable pageable);
     Page<Schedule> findByEvaluation(EvaluationEnum evaluation, Pageable pageable);
     List<Schedule> findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate, LocalDate endDate);
     Optional<Schedule> findByEvaluationAndCategoryAndStartDate(EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate);
