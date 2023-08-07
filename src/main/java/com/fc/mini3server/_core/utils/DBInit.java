@@ -498,16 +498,32 @@ public class DBInit {
                     .evaluation(EvaluationEnum.APPROVED)
                     .build();
             Schedule schedule24 = Schedule.builder()
-                    .user(user4)
+                    .user(user7)
                     .hospital(hospital1)
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 6))
                     .endDate(LocalDate.of(2023, 8, 6))
                     .evaluation(EvaluationEnum.APPROVED)
                     .build();
+            Schedule schedule25 = Schedule.builder()
+                    .user(user8)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 7))
+                    .endDate(LocalDate.of(2023, 8, 7))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
+            Schedule schedule26 = Schedule.builder()
+                    .user(user9)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 8))
+                    .endDate(LocalDate.of(2023, 8, 8))
+                    .evaluation(EvaluationEnum.STANDBY)
+                    .build();
 
             scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,
-                    schedule21, schedule22, schedule23, schedule24));
+                    schedule21, schedule22, schedule23, schedule24, schedule25, schedule26));
         };
     }
 }
