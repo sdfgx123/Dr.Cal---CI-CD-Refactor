@@ -55,10 +55,10 @@ public class UserService {
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
         try {
-            Hospital hospital = hospitalRepository.findById(registerDTO.getHospital_id())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospital_id()));
-            Dept dept = deptRepository.findById(registerDTO.getDept_id())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDept_id()));
+            Hospital hospital = hospitalRepository.findById(registerDTO.getHospitalId())
+                    .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospitalId()));
+            Dept dept = deptRepository.findById(registerDTO.getDeptId())
+                    .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDeptId()));
 
             Long empNo = initiateEmpNo();
             LocalDate hireDate = LocalDate.now();
