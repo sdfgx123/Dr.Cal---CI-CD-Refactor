@@ -33,7 +33,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.List;
 
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
@@ -185,15 +184,6 @@ public class UserService {
         LocalDateTime currentTime = LocalDateTime.now();
         String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return timeStamp;
-    }
-
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
-    }
-
-    public List<User> findAll() {
-        return userRepository.findAll();
     }
 
     public Page<User> findAllUserListAdmin(Pageable pageable){

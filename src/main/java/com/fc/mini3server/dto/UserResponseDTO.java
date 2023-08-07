@@ -61,8 +61,4 @@ public class UserResponseDTO {
                 user.getCreatedAt(),
                 user.getUpdatedAt());
     }
-
-//    public static List<UserResponseDTO> listOf(List<User> users){
-//        return users.stream().map(UserResponseDTO::of).collect(Collectors.toList());
-//    }
 }
