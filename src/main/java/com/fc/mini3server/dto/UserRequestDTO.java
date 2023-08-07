@@ -37,10 +37,10 @@ public class UserRequestDTO {
         private String name;
 
         @NotNull
-        private Long hospital_id;
+        private Long hospitalId;
 
         @NotNull
-        private Long dept_id;
+        private Long deptId;
 
         @Builder.Default
         private LevelEnum level = LevelEnum.INTERN;
