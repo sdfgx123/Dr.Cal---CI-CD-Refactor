@@ -8,6 +8,7 @@ import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class DBInit {
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     CommandLineRunner initDB(){
@@ -183,7 +185,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("이익준")
                     .email("ikjun@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -199,7 +201,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("김준완")
                     .email("junwan@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept14)
@@ -215,7 +217,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("안정원")
                     .email("jungwon@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept11)
@@ -232,7 +234,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("장윤복")
                     .email("younbok@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01011115228")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -248,7 +250,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("장홍도")
                     .email("hongdojjang@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01022225228")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -264,7 +266,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("정로사")
                     .email("losajeong@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01024425123")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -281,10 +283,10 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("양석형")
                     .email("sukhyung@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
-                    .hospital(hospital1)
-                    .dept(dept10)
+                    .hospital(hospital2)
+                    .dept(dept21)
                     .level(LevelEnum.FELLOW)
                     .auth(AuthEnum.USER)
                     .status(StatusEnum.APPROVED)
@@ -297,10 +299,10 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("채송화")
                     .email("songhwa@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
-                    .hospital(hospital1)
-                    .dept(dept14)
+                    .hospital(hospital2)
+                    .dept(dept22)
                     .level(LevelEnum.FELLOW)
                     .auth(AuthEnum.USER)
                     .status(StatusEnum.APPROVED)
@@ -313,10 +315,10 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("장겨울")
                     .email("winter@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
-                    .hospital(hospital1)
-                    .dept(dept11)
+                    .hospital(hospital2)
+                    .dept(dept23)
                     .level(LevelEnum.RESIDENT)
                     .auth(AuthEnum.USER)
                     .status(StatusEnum.APPROVED)
@@ -329,7 +331,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("이익주")
                     .email("ikjoo@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -345,7 +347,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("김준수")
                     .email("junsoo@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept14)
@@ -361,7 +363,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("도재학")
                     .email("jaehack@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept11)
@@ -377,7 +379,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("김다영")
                     .email("dayoung@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept10)
@@ -393,7 +395,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("윤가희")
                     .email("gahui@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept14)
@@ -409,7 +411,7 @@ public class DBInit {
                     .empNo(++empNo)
                     .name("한현희")
                     .email("hyunhui@doctorcal.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .phone("01012345678")
                     .hospital(hospital1)
                     .dept(dept11)
@@ -471,6 +473,33 @@ public class DBInit {
                     .evaluation(EvaluationEnum.APPROVED)
                     .reason("휴가")
                     .build();
+            Schedule schedule6 = Schedule.builder()
+                    .user(user7)
+                    .hospital(hospital2)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 3))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule7 = Schedule.builder()
+                    .user(user8)
+                    .hospital(hospital2)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 4))
+                    .endDate(LocalDate.of(2023, 8, 4))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
+            Schedule schedule8 = Schedule.builder()
+                    .user(user9)
+                    .hospital(hospital2)
+                    .category(CategoryEnum.ANNUAL)
+                    .startDate(LocalDate.of(2023, 8, 5))
+                    .endDate(LocalDate.of(2023, 8, 5))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .reason("휴가")
+                    .build();
 
             Schedule schedule21 = Schedule.builder()
                     .user(user1)
@@ -490,8 +519,8 @@ public class DBInit {
                     .evaluation(EvaluationEnum.APPROVED)
                     .build();
             Schedule schedule23 = Schedule.builder()
-                    .user(user3)
-                    .hospital(hospital1)
+                    .user(user7)
+                    .hospital(hospital2)
                     .category(CategoryEnum.DUTY)
                     .startDate(LocalDate.of(2023, 8, 5))
                     .endDate(LocalDate.of(2023, 8, 5))
@@ -523,6 +552,7 @@ public class DBInit {
                     .build();
 
             scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,
+                    schedule6, schedule7, schedule8,
                     schedule21, schedule22, schedule23, schedule24, schedule25, schedule26));
         };
     }
