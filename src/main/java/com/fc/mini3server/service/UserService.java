@@ -56,9 +56,9 @@ public class UserService {
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
         try {
             Hospital hospital = hospitalRepository.findById(registerDTO.getHospitalId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospitalId()));
+                    .orElseThrow(() -> new Exception400(HOSPITAL_NOT_FOUND));
             Dept dept = deptRepository.findById(registerDTO.getDeptId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDeptId()));
+                    .orElseThrow(() -> new Exception400(DEPT_NOT_FOUND));
 
             Long empNo = initiateEmpNo();
             LocalDate hireDate = LocalDate.now();
