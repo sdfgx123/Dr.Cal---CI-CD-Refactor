@@ -18,7 +18,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM schedule_tb s where s.category = :category ORDER BY CASE WHEN s.evaluation = 'STANDBY' THEN 1 ELSE 2 END")
     Page<Schedule> findByCategoryIsOrderById(@Param("category") CategoryEnum category, Pageable pageable);
-    Page<Schedule> findByEvaluation(EvaluationEnum evaluation, Pageable pageable);
+    Page<Schedule> findByEvaluationAndUserHospitalId(EvaluationEnum evaluation, Long hospitalId, Pageable pageable);
     List<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(Long hospitalId, EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate, LocalDate endDate);
     Optional<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDate(Long HospitalId, EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate);
     List<Schedule> findByUserId(Long userId);

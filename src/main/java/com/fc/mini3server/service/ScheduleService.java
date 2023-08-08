@@ -60,7 +60,8 @@ public class ScheduleService {
     }
 
     public Page<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule(Pageable pageable) {
-        return scheduleRepository.findByEvaluation(EvaluationEnum.APPROVED, pageable)
+        Long hospitalId = userService.getUser().getHospital().getId();
+        return scheduleRepository.findByEvaluationAndUserHospitalId(EvaluationEnum.APPROVED, hospitalId, pageable)
                 .map(ScheduleResponseDTO.ApprovedScheduleListDTO::of);
     }
 
