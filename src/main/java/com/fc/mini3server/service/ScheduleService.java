@@ -11,7 +11,6 @@ import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.dto.ScheduleRequestDTO;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
-import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.ScheduleRepository;
 import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
@@ -65,22 +65,29 @@ public class ScheduleService {
 
     public Schedule createAnnualSchedule(ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
         try {
-
             User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createAnnualDTO.getUser().getId()));
 
-            Schedule schedule = Schedule.builder()
-                    .user(user)
-                    .hospital(user.getHospital())
-                    .category(CategoryEnum.ANNUAL)
-                    .startDate(createAnnualDTO.getStartDate())
-                    .endDate(createAnnualDTO.getEndDate())
-                    .evaluation(EvaluationEnum.STANDBY)
-                    .reason(createAnnualDTO.getReason())
-                    .build();
+            long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
 
-            return scheduleRepository.save(schedule);
+            if (user.getAnnual() >= updateAnnual) {
+                Schedule schedule = Schedule.builder()
+                        .user(user)
+                        .hospital(user.getHospital())
+                        .category(CategoryEnum.ANNUAL)
+                        .startDate(createAnnualDTO.getStartDate())
+                        .endDate(createAnnualDTO.getEndDate())
+                        .evaluation(EvaluationEnum.STANDBY)
+                        .reason(createAnnualDTO.getReason())
+                        .build();
 
+                user.usedAnnual((int) updateAnnual);
+                userRepository.save(user);
+
+                return scheduleRepository.save(schedule);
+            } else {
+                throw new Exception400("사용 가능 연차가 부족합니다.");
+            }
         } catch (IllegalArgumentException e) {
             throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
         }
