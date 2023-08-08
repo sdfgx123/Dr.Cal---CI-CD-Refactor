@@ -33,12 +33,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ApiUtils.ApiResult<String>> login(@RequestBody @Valid UserRequestDTO.loginDTO loginDTO, Errors errors) {
         String jwtToken = userService.login(loginDTO);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
-
-        log.info("JWT Token provided : " + jwtToken);
-
+        log.info("JWT 토큰 발급 완료 | 발급 대상 유저 이메일 : " + loginDTO.getEmail());
         return ResponseEntity.ok().headers(headers).body(ApiUtils.success(null));
     }
 
@@ -57,6 +54,7 @@ public class UserController {
     public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO>> myPage() {
         User user = userService.getUser();
         UserResponseDTO responseDTO = UserResponseDTO.of(user);
+        log.info("유저 상세정보 호출 | 호출 대상 유저 : " + user.getEmail());
         return ResponseEntity.ok(ApiUtils.success(responseDTO));
     }
 

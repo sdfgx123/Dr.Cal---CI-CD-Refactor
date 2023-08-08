@@ -56,9 +56,9 @@ public class UserService {
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
         try {
             Hospital hospital = hospitalRepository.findById(registerDTO.getHospitalId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid hospital id : " + registerDTO.getHospitalId()));
+                    .orElseThrow(() -> new Exception400(HOSPITAL_NOT_FOUND));
             Dept dept = deptRepository.findById(registerDTO.getDeptId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid dept id : " + registerDTO.getDeptId()));
+                    .orElseThrow(() -> new Exception400(DEPT_NOT_FOUND));
 
             Long empNo = initiateEmpNo();
             LocalDate hireDate = LocalDate.now();
@@ -79,6 +79,7 @@ public class UserService {
                     .level(registerDTO.getLevel())
                     .build();
             userRepository.save(saveDTO.toEntity(passwordEncoder));
+            log.info("회원가입 발생 | 이메일 : " + registerDTO.getEmail());
         } catch (IllegalArgumentException e) {
             throw new Exception400(INVALID_REGISTER_FORMAT);
         }
@@ -104,25 +105,20 @@ public class UserService {
             throw new Exception401(INVALID_USER_NOT_APPROVED);
         }
 
-        log.info("로그인 성공 / 사용자 구분 : " + user.getAuth());
-
+        log.info("로그인 발생 | 사용자 구분 | 이메일 : " + user.getAuth() + " | " + user.getEmail());
         return jwtTokenProvider.create(user);
     }
 
     public void updatePasswordProc(UserRequestDTO.updatePasswordDTO updatePasswordDTO) {
-        log.info("old : " + updatePasswordDTO.getOldPassword());
-        log.info("new : " + updatePasswordDTO.getNewPassword());
         User user = getUser();
-        log.info("user.password : " + user.getPassword());
         validateOldPassword(user, updatePasswordDTO.getOldPassword());
         user.changePassword(updatePasswordDTO.getNewPassword(), passwordEncoder);
         userRepository.save(user);
-
+        log.info("비밀번호 변경 발생 | 변경 대상 유저 : " + user.getEmail());
     }
 
     public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("authentication : " + authentication);
         if (authentication == null) {
             throw new Exception401(INVALID_USER_NOT_APPROVED);
         }
@@ -144,6 +140,7 @@ public class UserService {
     public void updateUserProc(UserRequestDTO.updateUserDTO updateUserDTO) {
         User user = getUser();
         setUpdatedUser(user, updateUserDTO);
+        log.info("회원정보 변경됨 | 변경 대상 유저 : " + user.getEmail());
     }
 
     private void setUpdatedUser(User user, UserRequestDTO.updateUserDTO updateUserDTO) {

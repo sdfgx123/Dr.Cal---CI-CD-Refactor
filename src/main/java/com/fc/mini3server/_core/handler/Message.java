@@ -11,7 +11,8 @@ public interface Message {
     String INVALID_NOT_VALID_TOKEN = "올바른 토큰이 아닙니다.";
     String INVALID_NO_TOKEN_MATCHED_WITH_USER = "토큰 정보와 일치하는 회원이 없습니다.";
     String INVALID_PASSWORD = "입력하신 비밀번호가 일치하지 않습니다.";
-    String DEPT_NOT_FOUND = "제공해 주신 부서를 통해 찾을 수 있는 내용이 없습니다.";
+    String HOSPITAL_NOT_FOUND = "존재하지 않는 병원입니다.";
+    String DEPT_NOT_FOUND = "존재하지 않는 부서입니다.";
     String EXCEED_MAX_FILE_SIZE = "업로드한 이미지의 크기가 1MB를 초과합니다.";
     String IO_EXCEPTION_WHEN_FILE_UPLOADING = "이미지 파일 저장 중 문제가 발생했습니다.";
 }
