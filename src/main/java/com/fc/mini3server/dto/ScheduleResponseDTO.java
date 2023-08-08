@@ -50,12 +50,13 @@ public class ScheduleResponseDTO {
     public static class annualListByDateDTO {
         private Long id;
         private String username;
+        private String HospitalName;
         private String deptName;
         private LevelEnum level;
         private String phone;
 
         public static annualListByDateDTO of(Schedule schedule){
-            return new annualListByDateDTO(schedule.getId(), schedule.getUser().getName(),
+            return new annualListByDateDTO(schedule.getId(), schedule.getUser().getName(), schedule.getHospital().getName(),
                     schedule.getUser().getDept().getName(), schedule.getUser().getLevel(), schedule.getUser().getPhone());
         }
 
@@ -71,6 +72,7 @@ public class ScheduleResponseDTO {
         private Long id;
         private Long userId;
         private String username;
+        private String hospitalName;
         private String deptName;
         private LevelEnum level;
         private String phone;
@@ -78,7 +80,7 @@ public class ScheduleResponseDTO {
         private String profileImageUrl;
 
         public static dutyScheduleDTO of(Schedule schedule){
-            return new dutyScheduleDTO(schedule.getId(), schedule.getUser().getId(), schedule.getUser().getName(),
+            return new dutyScheduleDTO(schedule.getId(), schedule.getUser().getId(), schedule.getUser().getName(), schedule.getHospital().getName(),
                     schedule.getUser().getDept().getName(), schedule.getUser().getLevel(), schedule.getUser().getPhone(),
                     schedule.getUser().getEmail(), schedule.getUser().getProfileImageUrl());
         }

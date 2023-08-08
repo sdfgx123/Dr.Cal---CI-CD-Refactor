@@ -173,14 +173,18 @@ public class ScheduleService {
         scheduleRepository.updateEvaluationToCanceled(id);
     }
 
-    public List<Schedule> findAllScheduleListByDate (getScheduleReqDTO requestDTO){
-        return scheduleRepository.findByEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
-                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
+    public List<Schedule> findAllScheduleListByDate(getScheduleReqDTO requestDTO){
+        Long hospitalId = userService.getUser().getHospital().getId();
+
+        return scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(
+                hospitalId, EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate());
     }
 
-    public Schedule findByDutyScheduleByDate (getScheduleReqDTO requestDTO){
-        return scheduleRepository.findByEvaluationAndCategoryAndStartDate(
-                EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
+    public Schedule findByDutyScheduleByDate(getScheduleReqDTO requestDTO){
+        Long hospitalId = userService.getUser().getHospital().getId();
+
+        return scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
+                hospitalId, EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
         ).orElseThrow(
                 () -> new Exception404("금일 당직 인원이 없습니다.")
         );
