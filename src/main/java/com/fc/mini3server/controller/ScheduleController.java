@@ -31,7 +31,7 @@ public class ScheduleController {
 
     @GetMapping("/")
     public ResponseEntity<?> getApprovedSchedules(Pageable pageable) {
-        return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule(pageable).getContent()));
+        return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule()));
     }
 
     @GetMapping("/date")

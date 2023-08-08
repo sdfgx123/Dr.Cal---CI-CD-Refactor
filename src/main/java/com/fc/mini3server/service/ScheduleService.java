@@ -32,13 +32,11 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final HospitalRepository hospitalRepository;
 
     @Autowired
     public ScheduleService(UserService userService, ScheduleRepository scheduleRepository, HospitalRepository hospitalRepository, UserRepository userRepository) {
         this.userService = userService;
         this.scheduleRepository = scheduleRepository;
-        this.hospitalRepository = hospitalRepository;
         this.userRepository = userRepository;
     }
 
@@ -59,11 +57,11 @@ public class ScheduleService {
         schedule.updateEvaluation(requestDTO.getEvaluation());
     }
 
-    public Page<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule(Pageable pageable) {
+    public List<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule() {
         Long hospitalId = userService.getUser().getHospital().getId();
-        return scheduleRepository.findByEvaluationAndUserHospitalId(EvaluationEnum.APPROVED, hospitalId, pageable)
-                .map(ScheduleResponseDTO.ApprovedScheduleListDTO::of);
+        return ScheduleResponseDTO.ApprovedScheduleListDTO.listOf(scheduleRepository.findByEvaluationAndUserHospitalId(EvaluationEnum.APPROVED, hospitalId));
     }
+
 
     public Schedule createAnnualSchedule(ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
         try {
