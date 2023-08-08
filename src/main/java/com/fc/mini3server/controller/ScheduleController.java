@@ -30,7 +30,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/")
-    public ResponseEntity<?> getApprovedSchedules(Pageable pageable) {
+    public ResponseEntity<?> getApprovedSchedules() {
         return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule()));
     }
 

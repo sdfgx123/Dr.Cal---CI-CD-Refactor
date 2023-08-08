@@ -34,7 +34,7 @@ public class ScheduleService {
     private final UserService userService;
 
     @Autowired
-    public ScheduleService(UserService userService, ScheduleRepository scheduleRepository, HospitalRepository hospitalRepository, UserRepository userRepository) {
+    public ScheduleService(UserService userService, ScheduleRepository scheduleRepository, UserRepository userRepository) {
         this.userService = userService;
         this.scheduleRepository = scheduleRepository;
         this.userRepository = userRepository;
