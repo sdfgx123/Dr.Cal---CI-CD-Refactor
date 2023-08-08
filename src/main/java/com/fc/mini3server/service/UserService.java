@@ -1,6 +1,5 @@
 package com.fc.mini3server.service;
 
-import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server._core.handler.exception.Exception500;
@@ -34,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
+import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @Slf4j
@@ -80,7 +80,7 @@ public class UserService {
                     .build();
             userRepository.save(saveDTO.toEntity(passwordEncoder));
         } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.");
+            throw new Exception400(INVALID_REGISTER_FORMAT);
         }
     }
 
@@ -101,7 +101,7 @@ public class UserService {
         User user = userDetail.getUser();
 
         if (user.getStatus() != StatusEnum.APPROVED) {
-            throw new Exception401("인증되지 않은 사용자 입니다.");
+            throw new Exception401(INVALID_USER_NOT_APPROVED);
         }
 
         log.info("로그인 성공 / 사용자 구분 : " + user.getAuth());
@@ -124,20 +124,20 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("authentication : " + authentication);
         if (authentication == null) {
-            throw new Exception401("인증되지 않은 유저입니다.");
+            throw new Exception401(INVALID_USER_NOT_APPROVED);
         }
         if (! (authentication.getPrincipal() instanceof PrincipalUserDetail)) {
-            throw new Exception400("올바른 토큰이 아닙니다.");
+            throw new Exception400(INVALID_NOT_VALID_TOKEN);
         }
         Long id = ((PrincipalUserDetail) authentication.getPrincipal()).getUser().getId();
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new Exception400("토큰 정보와 일치하는 회원이 없습니다."));
+                .orElseThrow(() -> new Exception400(INVALID_NO_TOKEN_MATCHED_WITH_USER));
         return user;
     }
 
     private void validateOldPassword(User user, String oldPassword) {
         if (! passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new Exception400("입력하신 비밀번호가 일치하지 않습니다.");
+            throw new Exception400(INVALID_PASSWORD);
         }
     }
 
@@ -152,7 +152,7 @@ public class UserService {
         }
         if (updateUserDTO.getDeptId() != null) {
             Dept dept = deptRepository.findById(updateUserDTO.getDeptId())
-                    .orElseThrow(() -> new Exception400("제공한 dept를 통해 찾을 수 있는 부서가 없습니다."));
+                    .orElseThrow(() -> new Exception400(DEPT_NOT_FOUND));
             user.setDept(dept);
         }
         if (updateUserDTO.getPhone() != null) {
@@ -168,7 +168,7 @@ public class UserService {
             byte[] decodedBytes = Base64.getDecoder().decode(updateUserDTO.getImage());
 
             if (decodedBytes.length > MAX_FILE_SIZE) {
-                throw new Exception500("업로드한 이미지의 크기가 1MB를 초과합니다.");
+                throw new Exception500(EXCEED_MAX_FILE_SIZE);
             }
 
             String fileName = initiateFileName();
@@ -176,7 +176,7 @@ public class UserService {
             Files.write(destination, decodedBytes);
             user.setProfileImageUrl(FILE_DIR + fileName);
         } catch (IOException e) {
-            throw new Exception500("이미지 파일 저장 중 문제가 발생했습니다.");
+            throw new Exception500(IO_EXCEPTION_WHEN_FILE_UPLOADING);
         }
     }
 
@@ -197,7 +197,7 @@ public class UserService {
     @Transactional
     public void updateUserAuth(Long id, editAuthDTO requestDTO) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
 
         user.updateAuth(requestDTO.getAuth());
     }
@@ -205,10 +205,10 @@ public class UserService {
     @Transactional
     public void approveUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
 
         if (!user.getStatus().equals(StatusEnum.NOTAPPROVED))
-            throw new Exception400(Message.INVALID_USER_STATUS_NOT_APPROVED);
+            throw new Exception400(INVALID_USER_STATUS_NOT_APPROVED);
 
         user.updateStatus(StatusEnum.APPROVED);
     }
@@ -216,10 +216,10 @@ public class UserService {
     @Transactional
     public void retireUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
+                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
 
         if (!user.getStatus().equals(StatusEnum.APPROVED))
-            throw new Exception400(Message.INVALID_USER_STATUS_APPROVED);
+            throw new Exception400(INVALID_USER_STATUS_APPROVED);
 
         user.updateStatus(StatusEnum.RETIRED);
     }
