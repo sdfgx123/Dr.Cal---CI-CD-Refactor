@@ -82,4 +82,8 @@ public class User {
     public void changePassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(newPassword);
     }
+
+    public void usedAnnual(int newAnnual) {
+        this.annual -= newAnnual;
+    }
 }
