@@ -2,7 +2,7 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
-import com.fc.mini3server._core.handler.exception.Exception403;
+import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
@@ -36,7 +36,11 @@ public class ScheduleService {
     public Schedule createAnnualSchedule(createAnnualDTO createAnnualDTO) {
         try {
             User user = userRepository.findById(userService.getUser().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + userService.getUser().getId()));
+                    .orElseThrow(() -> new Exception400("id: " + userService.getUser().getId(), Message.INVALID_ID_PARAMETER));
+
+            if (createAnnualDTO.getStartDate().isAfter(createAnnualDTO.getEndDate())) {
+                throw new Exception400(Message.INVALID_DATE_RANGE);
+            }
 
             if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
                     user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate()))
@@ -60,10 +64,10 @@ public class ScheduleService {
 
                 return scheduleRepository.save(schedule);
             } else {
-                throw new Exception400("사용 가능 연차가 부족합니다.");
+                throw new Exception400(Message.NO_USER_ANNUAL_LEFT);
             }
         } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
+            throw new Exception400(Message.INVALID_CREATE_ANNUAL_FORMAT);
         }
     }
 
@@ -71,7 +75,7 @@ public class ScheduleService {
     public Schedule updateAnnual(Long id, createAnnualDTO updateDTO) {
         try {
             Schedule schedule = scheduleRepository.findById(id)
-                    .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
+                    .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
             User user = userService.getUser();
             long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
@@ -92,7 +96,7 @@ public class ScheduleService {
             return scheduleRepository.save(schedule);
 
         } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
+            throw new Exception400(Message.INVALID_CREATE_ANNUAL_FORMAT);
         }
     }
 
@@ -130,15 +134,15 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid schedule id: " + id));
+                .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
 
         if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
-            throw new Exception403("접근 권한이 없습니다.");
+            throw new Exception401(Message.INVALID_NOT_EQUAL_USER);
         }
 
         if (EvaluationEnum.CANCELED.equals(schedule.getEvaluation())) {
-            throw new IllegalStateException("이미 취소된 스케줄 입니다.");
+            throw new Exception400(Message.ALREADY_EXISTS_CANCELED_ANNUAL);
         }
 
         scheduleRepository.updateEvaluationToCanceled(id);
