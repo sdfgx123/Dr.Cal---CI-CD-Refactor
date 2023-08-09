@@ -27,5 +27,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @Query("UPDATE schedule_tb s SET s.evaluation = 'CANCELED' WHERE s.id = :scheduleId")
     void updateEvaluationToCanceled(@Param("scheduleId") Long scheduleId);
 
-    boolean existsScheduleByStartDateAndCategoryAndEvaluation(LocalDate chooseDate, CategoryEnum category, EvaluationEnum evaluation);
+    boolean existsScheduleByHospitalIdAndStartDateAndCategoryAndEvaluation(Long id, LocalDate chooseDate, CategoryEnum categoryEnum, EvaluationEnum evaluationEnum);
+
+    boolean existsByHospitalIdAndEvaluationAndCategoryAndEndDate(Long id, EvaluationEnum evaluationEnum, CategoryEnum categoryEnum, LocalDate updateDate);
+
+
 }

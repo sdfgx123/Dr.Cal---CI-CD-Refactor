@@ -90,8 +90,8 @@ public class AdminService {
                 () -> new Exception400(String.valueOf(user.getHospital().getId()), Message.HOSPITAL_NOT_FOUND)
         );
 
-        if(scheduleRepository.existsScheduleByStartDateAndCategoryAndEvaluation(
-                requestDTO.getChooseDate(), CategoryEnum.DUTY, EvaluationEnum.APPROVED))
+        if(scheduleRepository.existsScheduleByHospitalIdAndStartDateAndCategoryAndEvaluation(
+                user.getHospital().getId(), requestDTO.getChooseDate(), CategoryEnum.DUTY, EvaluationEnum.APPROVED))
             throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE);
 
         Schedule schedule = Schedule.builder()

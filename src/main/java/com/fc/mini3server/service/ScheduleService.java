@@ -8,7 +8,6 @@ import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.domain.EvaluationEnum;
 import com.fc.mini3server.domain.Schedule;
-import com.fc.mini3server.dto.ScheduleRequestDTO;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
 import com.fc.mini3server.repository.ScheduleRepository;
 import com.fc.mini3server.repository.UserRepository;
@@ -34,7 +33,7 @@ public class ScheduleService {
         return ScheduleResponseDTO.ApprovedScheduleListDTO.listOf(scheduleRepository.findByEvaluationAndUserHospitalId(EvaluationEnum.APPROVED, hospitalId));
     }
 
-    public Schedule createAnnualSchedule(ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
+    public Schedule createAnnualSchedule(createAnnualDTO createAnnualDTO) {
         try {
             User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createAnnualDTO.getUser().getId()));
@@ -64,31 +63,8 @@ public class ScheduleService {
         }
     }
 
-    public Schedule createDutySchedule(ScheduleRequestDTO.createDutyDTO createDutyDTO) {
-        try {
-
-            User user = userRepository.findById(userService.getUser().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createDutyDTO.getUser().getId()));
-
-            Schedule schedule = Schedule.builder()
-                    .user(user)
-                    .hospital(user.getHospital())
-                    .category(CategoryEnum.DUTY)
-                    .startDate(createDutyDTO.getStartDate())
-                    .endDate(createDutyDTO.getStartDate())
-                    .evaluation(EvaluationEnum.STANDBY)
-                    .reason("당직")
-                    .build();
-
-            return scheduleRepository.save(schedule);
-
-        } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 당직 일자를 제대로 입력 하였는지 확인하십시오.");
-        }
-    }
-
     @Transactional
-    public Schedule updateAnnual(Long id, ScheduleRequestDTO.createAnnualDTO updateDTO) {
+    public Schedule updateAnnual(Long id, createAnnualDTO updateDTO) {
         try {
             Schedule schedule = scheduleRepository.findById(id)
                     .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
@@ -111,25 +87,33 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule updateDuty(Long id, ScheduleRequestDTO.createDutyDTO updateDTO) {
-        try {
-            Schedule schedule = scheduleRepository.findById(id)
-                    .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
+    public void changeReqDuty(Long id, updateDutyDTO requestDTO) {
+        User user = userService.getUser();
 
-            if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
-                throw new Exception403("접근 권한이 없습니다.");
-            }
+        Schedule originSchedule = scheduleRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
+        );
 
-            schedule.setStartDate(updateDTO.getStartDate());
-            schedule.setEndDate(updateDTO.getStartDate());
-            schedule.setEvaluation(EvaluationEnum.STANDBY);
+        if (scheduleRepository.existsByHospitalIdAndEvaluationAndCategoryAndEndDate(
+                user.getHospital().getId(), EvaluationEnum.STANDBY, CategoryEnum.DUTY, requestDTO.getUpdateDate()))
+            throw new Exception400(Message.ALREADY_EXISTS_CHANGE_DUTY_REQUEST);
 
-            Schedule updatedSchedule = scheduleRepository.save(schedule);
-            return updatedSchedule;
+        scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
+                user.getHospital().getId(), EvaluationEnum.APPROVED, CategoryEnum.DUTY, requestDTO.getUpdateDate())
+                .orElseThrow(
+                        () -> new Exception400(Message.NO_DUTY_SCHEDULE_ON_DATE)
+                );
 
-        } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 당직 일자를 제대로 입력 하였는지 확인하십시오.");
-        }
+        Schedule schedule = Schedule.builder()
+                .user(user)
+                .hospital(user.getHospital())
+                .category(CategoryEnum.DUTY)
+                .startDate(originSchedule.getStartDate())
+                .endDate(requestDTO.getUpdateDate())
+                .evaluation(EvaluationEnum.STANDBY)
+                .build();
+
+        scheduleRepository.save(schedule);
     }
 
 

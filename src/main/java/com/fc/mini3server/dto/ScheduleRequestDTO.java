@@ -25,12 +25,12 @@ public class ScheduleRequestDTO {
 
     }
 
-    @Data
-    public static class createDutyDTO {
-
-        @NotNull
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class updateDutyDTO {
         private LocalDate startDate;
-        private User user;
+        private LocalDate updateDate;
     }
 
     @NoArgsConstructor
