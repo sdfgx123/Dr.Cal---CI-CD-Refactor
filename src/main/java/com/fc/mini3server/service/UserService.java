@@ -16,9 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +31,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import static com.fc.mini3server._core.handler.Message.*;
-import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @Slf4j
 @Service
@@ -181,43 +177,5 @@ public class UserService {
         LocalDateTime currentTime = LocalDateTime.now();
         String timeStamp = currentTime.format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         return timeStamp;
-    }
-
-    public Page<User> findAllUserListAdmin(Pageable pageable){
-        return userRepository.findByStatusNot(StatusEnum.NOTAPPROVED, pageable);
-    }
-
-    public Page<User> findAllJoinUserListAdmin(Pageable pageable) {
-        return userRepository.findByStatusIs(StatusEnum.NOTAPPROVED, pageable);
-    }
-
-    @Transactional
-    public void updateUserAuth(Long id, editAuthDTO requestDTO) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
-
-        user.updateAuth(requestDTO.getAuth());
-    }
-
-    @Transactional
-    public void approveUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
-
-        if (!user.getStatus().equals(StatusEnum.NOTAPPROVED))
-            throw new Exception400(INVALID_USER_STATUS_NOT_APPROVED);
-
-        user.updateStatus(StatusEnum.APPROVED);
-    }
-
-    @Transactional
-    public void retireUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
-
-        if (!user.getStatus().equals(StatusEnum.APPROVED))
-            throw new Exception400(INVALID_USER_STATUS_APPROVED);
-
-        user.updateStatus(StatusEnum.RETIRED);
     }
 }
