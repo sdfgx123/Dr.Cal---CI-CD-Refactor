@@ -37,7 +37,7 @@ public class ScheduleService {
     public Schedule createAnnualSchedule(ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
         try {
             User user = userRepository.findById(userService.getUser().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + createAnnualDTO.getUser().getId()));
+                    .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + userService.getUser().getId()));
 
             long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
 
@@ -93,17 +93,23 @@ public class ScheduleService {
             Schedule schedule = scheduleRepository.findById(id)
                     .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
 
-            if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
-                throw new Exception403("접근 권한이 없습니다.");
-            }
+            User user = userService.getUser();
+            long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
 
             schedule.setStartDate(updateDTO.getStartDate());
             schedule.setEndDate(updateDTO.getEndDate());
             schedule.setReason(updateDTO.getReason());
             schedule.setEvaluation(EvaluationEnum.STANDBY);
 
-            Schedule updatedSchedule = scheduleRepository.save(schedule);
-            return updatedSchedule;
+            long updatedAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+
+            if (originalAnnual != updatedAnnual) {
+                user.setAnnual((int) (user.getAnnual() + originalAnnual));
+                user.usedAnnual((int) updatedAnnual);
+                userRepository.save(user);
+            }
+
+            return scheduleRepository.save(schedule);
 
         } catch (IllegalArgumentException e) {
             throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
