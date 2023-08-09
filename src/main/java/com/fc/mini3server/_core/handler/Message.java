@@ -14,7 +14,7 @@ public interface Message {
     String ALREADY_EXISTS_CANCELED_ANNUAL = "이미 취소된 스케줄 입니다.";
     String NO_DUTY_SCHEDULE_ON_DATE = "바꾸려는 날짜에 당직이 없습니다.";
     String INVALID_DATE_RANGE = "시작일은 종료일보다 이전이거나 같아야 합니다.";
-    String INVALID_EVALUATION_CANCELED = "신청이 취소된 연차는 수정할 수 없습니다.";
+    String INVALID_EVALUATION_CANCELED = "취소된 연차는 수정할 수 없습니다.";
     String INVALID_SCHEDULE_EVALUATION = "미처리 된 건만 승인 가능합니다.";
     String INVALID_SCHEDULE_CATEGORY_NOT_DUTY = "당직 스케줄만 삭제 가능합니다.";
     String INVALID_SCHEDULE_CATEGORY_NOT_ANNUAL = "연차 스케줄만 삭제 가능합니다.";

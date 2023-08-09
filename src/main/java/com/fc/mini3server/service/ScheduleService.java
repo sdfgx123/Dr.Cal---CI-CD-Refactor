@@ -2,7 +2,6 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
-import com.fc.mini3server._core.handler.exception.Exception401;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
@@ -38,10 +38,13 @@ public class ScheduleService {
             User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new Exception400("id: " + userService.getUser().getId(), Message.INVALID_ID_PARAMETER));
 
+            List<EvaluationEnum> findEvaluations = Arrays.asList(EvaluationEnum.APPROVED, EvaluationEnum.STANDBY);
+
             if (!createAnnualDTO.getStartDate().isAfter(createAnnualDTO.getEndDate())) {
-                if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                        user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate()))
+                if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndEvaluationIn(
+                        user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate(), findEvaluations)) {
                     throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
+                }
 
                 long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
 
@@ -77,20 +80,19 @@ public class ScheduleService {
         try {
             Schedule schedule = scheduleRepository.findById(id)
                     .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
+            User user = userService.getUser();
+            List<EvaluationEnum> findEvaluations = Arrays.asList(EvaluationEnum.APPROVED, EvaluationEnum.STANDBY);
 
             if (schedule.getEvaluation() == EvaluationEnum.CANCELED) {
                 throw new Exception400(Message.INVALID_EVALUATION_CANCELED);
             }
 
-            User user = userService.getUser();
-
             if (updateDTO.getStartDate().isAfter(updateDTO.getEndDate())) {
                 throw new Exception400(Message.INVALID_DATE_RANGE);
             }
 
-            if ((schedule.getEvaluation() == EvaluationEnum.APPROVED || schedule.getEvaluation() == EvaluationEnum.STANDBY) &&
-                    scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                            user.getId(), CategoryEnum.ANNUAL, updateDTO.getEndDate(), updateDTO.getStartDate())) {
+            if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndEvaluationIn(
+                    user.getId(), CategoryEnum.ANNUAL, updateDTO.getEndDate(), updateDTO.getStartDate(), findEvaluations)) {
                 throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
             }
 
@@ -149,7 +151,6 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
     }
-
 
     @Transactional
     public void deleteSchedule(Long id) {
