@@ -23,7 +23,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDate(Long HospitalId, EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate);
     Optional<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDateAndEndDate(Long hospitalId, EvaluationEnum evaluationEnum, CategoryEnum category, LocalDate chooseDate, LocalDate chooseDate1);
     List<Schedule> findByUserId(Long userId);
-    List<Schedule> findByEvaluationIn(List<EvaluationEnum> evaluations);
 
     @Modifying
     @Query("UPDATE schedule_tb s SET s.evaluation = 'CANCELED' WHERE s.id = :scheduleId")

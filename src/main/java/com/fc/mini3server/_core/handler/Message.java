@@ -21,7 +21,6 @@ public interface Message {
     String INVALID_REGISTER_FORMAT = "요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.";
     String INVALID_CREATE_ANNUAL_FORMAT = "요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.";
     String INVALID_USER_NOT_APPROVED = "인증되지 않은 사용자 입니다.";
-    String INVALID_NOT_EQUAL_USER = "접근 권한이 없습니다.";
     String INVALID_NOT_VALID_TOKEN = "올바른 토큰이 아닙니다.";
     String INVALID_NO_TOKEN_MATCHED_WITH_USER = "토큰 정보와 일치하는 회원이 없습니다.";
     String INVALID_PASSWORD = "입력하신 비밀번호가 일치하지 않습니다.";
