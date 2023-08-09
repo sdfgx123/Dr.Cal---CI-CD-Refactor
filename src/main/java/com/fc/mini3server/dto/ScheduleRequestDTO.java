@@ -21,8 +21,6 @@ public class ScheduleRequestDTO {
         @NotNull
         private String reason;
 
-        private User user;
-
     }
 
     @NoArgsConstructor
