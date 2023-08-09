@@ -73,7 +73,7 @@ public class AdminController {
     @GetMapping("/annual")
     public ResponseEntity<?> findAnnualList(@PageableDefault(size = 10)
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "createdAt", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "updatedAt", direction = Sort.Direction.ASC),
                     @SortDefault(sort = "id", direction = Sort.Direction.ASC)
             }) Pageable pageable){
         final Page<Schedule> scheduleList = adminService.findAnnualList(pageable);
@@ -87,7 +87,7 @@ public class AdminController {
     @GetMapping("/duty")
     public ResponseEntity<?> findDutyList(@PageableDefault(size = 10)
               @SortDefault.SortDefaults({
-                      @SortDefault(sort = "createdAt", direction = Sort.Direction.ASC),
+                      @SortDefault(sort = "updatedAt", direction = Sort.Direction.ASC),
                       @SortDefault(sort = "id", direction = Sort.Direction.ASC)
               }) Pageable pageable){
         final Page<Schedule> scheduleList = adminService.findDutyList(pageable);

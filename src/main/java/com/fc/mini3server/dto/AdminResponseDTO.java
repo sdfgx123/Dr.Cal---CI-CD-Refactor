@@ -66,13 +66,14 @@ public class AdminResponseDTO {
         private CategoryEnum category;
         private LevelEnum level;
         private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
         private LocalDate startDate;
         private LocalDate endDate;
         private EvaluationEnum evaluation;
 
         public static AdminAnnualListDTO of(Schedule schedule) {
             return new AdminAnnualListDTO(schedule.getId(), schedule.getUser().getName(),
-                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(),
+                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(), schedule.getUpdatedAt(),
                     schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
         }
 
@@ -91,13 +92,14 @@ public class AdminResponseDTO {
         private CategoryEnum category;
         private LevelEnum level;
         private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
         private LocalDate startDate;
         private LocalDate updateDate;
         private EvaluationEnum evaluation;
 
         public static DutyListDTO of(Schedule schedule) {
             return new DutyListDTO(schedule.getId(), schedule.getUser().getName(), schedule.getHospital().getName(),
-                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(),
+                    schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(), schedule.getUpdatedAt(),
                     schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
         }
 
