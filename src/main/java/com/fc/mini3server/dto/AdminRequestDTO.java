@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public class AdminRequestDTO {
 
     @AllArgsConstructor
@@ -28,5 +30,12 @@ public class AdminRequestDTO {
     @Getter
     public static class editEvaluationDTO {
         private EvaluationEnum evaluation;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class createDutyAdminDTO {
+        private LocalDate chooseDate;
     }
 }

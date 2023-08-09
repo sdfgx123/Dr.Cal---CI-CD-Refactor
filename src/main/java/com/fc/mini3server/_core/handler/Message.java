@@ -5,7 +5,7 @@ public interface Message {
     String INVALID_USER_STATUS_NOT_APPROVED = "미승인 상태의 계정만 승인 가능합니다.";
     String INVALID_USER_STATUS_APPROVED = "재직 중인 계정만 변경 가능합니다.";
     String METHOD_ARGUMENT_TYPE_MISMATCH = "유효하지 않은 파라미터입니다.";
-
+    String NO_USER_DUTY_LEFT = "남은 당직 횟수가 없습니다.";
     String INVALID_REGISTER_FORMAT = "요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.";
     String INVALID_USER_NOT_APPROVED = "인증되지 않은 사용자 입니다.";
     String INVALID_NOT_VALID_TOKEN = "올바른 토큰이 아닙니다.";
