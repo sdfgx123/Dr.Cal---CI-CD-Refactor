@@ -21,6 +21,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByEvaluationAndUserHospitalId(EvaluationEnum evaluation, Long hospitalId);
     List<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDateIsLessThanEqualAndEndDateIsGreaterThanEqual(Long hospitalId, EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate, LocalDate endDate);
     Optional<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDate(Long HospitalId, EvaluationEnum evaluation, CategoryEnum category, LocalDate startDate);
+    Optional<Schedule> findByHospitalIdAndEvaluationAndCategoryAndStartDateAndEndDate(Long hospitalId, EvaluationEnum evaluationEnum, CategoryEnum category, LocalDate chooseDate, LocalDate chooseDate1);
     List<Schedule> findByUserId(Long userId);
 
     @Modifying

@@ -144,8 +144,8 @@ public class ScheduleService {
     public Schedule findByDutyScheduleByDate(getScheduleReqDTO requestDTO){
         Long hospitalId = userService.getUser().getHospital().getId();
 
-        return scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
-                hospitalId, EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate()
+        return scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDateAndEndDate(
+                hospitalId, EvaluationEnum.APPROVED, requestDTO.getCategory(), requestDTO.getChooseDate(), requestDTO.getChooseDate()
         ).orElseThrow(
                 () -> new Exception404("금일 당직 인원이 없습니다.")
         );

@@ -33,6 +33,7 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule()));
     }
 
+    @Operation(summary = "날짜별 휴가/당직 인원 조회", description = "날짜별로 클릭 시 데이터 출력")
     @GetMapping("/date")
     public ResponseEntity<?> getScheduleByDate(@RequestParam("chooseDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate chooseDate,
                                                  @RequestParam("category") CategoryEnum category){
@@ -51,6 +52,7 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.error(Message.METHOD_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST));
     }
 
+    @Operation(summary = "요청 내역 확인")
     @GetMapping("/{id}")
     public ResponseEntity<?> getScheduleRequestList(@PathVariable Long id){
         List<Schedule> scheduleList = scheduleService.findAllRequestSchedule(id);
