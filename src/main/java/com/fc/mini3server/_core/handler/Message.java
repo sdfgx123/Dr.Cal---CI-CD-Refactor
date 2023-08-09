@@ -17,6 +17,7 @@ public interface Message {
     String INVALID_EVALUATION_CANCELED = "신청이 취소된 연차는 수정할 수 없습니다.";
     String INVALID_SCHEDULE_EVALUATION = "미처리 된 건만 승인 가능합니다.";
     String INVALID_SCHEDULE_CATEGORY_NOT_DUTY = "당직 스케줄만 삭제 가능합니다.";
+    String INVALID_SCHEDULE_CATEGORY_NOT_ANNUAL = "연차 스케줄만 삭제 가능합니다.";
     String INVALID_REGISTER_FORMAT = "요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.";
     String INVALID_CREATE_ANNUAL_FORMAT = "요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.";
     String INVALID_USER_NOT_APPROVED = "인증되지 않은 사용자 입니다.";

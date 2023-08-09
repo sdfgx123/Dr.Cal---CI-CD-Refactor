@@ -158,6 +158,10 @@ public class ScheduleService {
 
         User user = userService.getUser();
 
+        if (CategoryEnum.ANNUAL != schedule.getCategory()) {
+            throw new Exception400(Message.INVALID_SCHEDULE_CATEGORY_NOT_ANNUAL);
+        }
+
         if (!schedule.getUser().getId().equals(user.getId())) {
             throw new Exception401(Message.INVALID_NOT_EQUAL_USER);
         }
