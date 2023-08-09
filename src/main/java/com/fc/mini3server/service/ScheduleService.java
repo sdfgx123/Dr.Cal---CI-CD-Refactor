@@ -2,7 +2,6 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
-import com.fc.mini3server._core.handler.exception.Exception403;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
@@ -36,30 +36,42 @@ public class ScheduleService {
     public Schedule createAnnualSchedule(createAnnualDTO createAnnualDTO) {
         try {
             User user = userRepository.findById(userService.getUser().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + userService.getUser().getId()));
+                    .orElseThrow(() -> new Exception400("id: " + userService.getUser().getId(), Message.INVALID_ID_PARAMETER));
 
-            long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
+            List<EvaluationEnum> findEvaluations = Arrays.asList(EvaluationEnum.APPROVED, EvaluationEnum.STANDBY);
 
-            if (user.getAnnual() >= updateAnnual) {
-                Schedule schedule = Schedule.builder()
-                        .user(user)
-                        .hospital(user.getHospital())
-                        .category(CategoryEnum.ANNUAL)
-                        .startDate(createAnnualDTO.getStartDate())
-                        .endDate(createAnnualDTO.getEndDate())
-                        .evaluation(EvaluationEnum.STANDBY)
-                        .reason(createAnnualDTO.getReason())
-                        .build();
+            if (!createAnnualDTO.getStartDate().isAfter(createAnnualDTO.getEndDate())) {
+                if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndEvaluationIn(
+                        user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate(), findEvaluations)) {
+                    throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
+                }
 
-                user.usedAnnual((int) updateAnnual);
-                userRepository.save(user);
+                long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
 
-                return scheduleRepository.save(schedule);
+                if (user.getAnnual() > 0 && user.getAnnual() >= updateAnnual) {
+                    Schedule schedule = Schedule.builder()
+                            .user(user)
+                            .hospital(user.getHospital())
+                            .category(CategoryEnum.ANNUAL)
+                            .startDate(createAnnualDTO.getStartDate())
+                            .endDate(createAnnualDTO.getEndDate())
+                            .evaluation(EvaluationEnum.STANDBY)
+                            .reason(createAnnualDTO.getReason())
+                            .build();
+
+                    user.usedAnnual((int) updateAnnual);
+                    userRepository.save(user);
+
+                    return scheduleRepository.save(schedule);
+                } else {
+                    throw new Exception400(Message.NO_USER_ANNUAL_LEFT);
+                }
             } else {
-                throw new Exception400("사용 가능 연차가 부족합니다.");
+                throw new Exception400(Message.INVALID_DATE_RANGE);
             }
+
         } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
+            throw new Exception400(Message.INVALID_CREATE_ANNUAL_FORMAT);
         }
     }
 
@@ -67,10 +79,25 @@ public class ScheduleService {
     public Schedule updateAnnual(Long id, createAnnualDTO updateDTO) {
         try {
             Schedule schedule = scheduleRepository.findById(id)
-                    .orElseThrow(() -> new Exception404("해당 등록 정보가 없습니다."));
-
+                    .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
             User user = userService.getUser();
+            List<EvaluationEnum> findEvaluations = Arrays.asList(EvaluationEnum.APPROVED, EvaluationEnum.STANDBY);
+
+            if (schedule.getEvaluation() == EvaluationEnum.CANCELED) {
+                throw new Exception400(Message.INVALID_EVALUATION_CANCELED);
+            }
+
+            if (updateDTO.getStartDate().isAfter(updateDTO.getEndDate())) {
+                throw new Exception400(Message.INVALID_DATE_RANGE);
+            }
+
+            if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndEvaluationIn(
+                    user.getId(), CategoryEnum.ANNUAL, updateDTO.getEndDate(), updateDTO.getStartDate(), findEvaluations)) {
+                throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
+            }
+
             long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+            user.setAnnual((int) (user.getAnnual() + (originalAnnual + 1)));
 
             schedule.setStartDate(updateDTO.getStartDate());
             schedule.setEndDate(updateDTO.getEndDate());
@@ -80,15 +107,18 @@ public class ScheduleService {
             long updatedAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
 
             if (originalAnnual != updatedAnnual) {
-                user.setAnnual((int) (user.getAnnual() + originalAnnual));
-                user.usedAnnual((int) updatedAnnual);
-                userRepository.save(user);
+                if (user.getAnnual()>= updatedAnnual && user.getAnnual() >= 0) {
+                    user.usedAnnual((int) updatedAnnual);
+                    userRepository.save(user);
+                } else {
+                    throw new Exception400(Message.NO_USER_ANNUAL_LEFT);
+                }
             }
 
             return scheduleRepository.save(schedule);
 
         } catch (IllegalArgumentException e) {
-            throw new Exception400("요청 형식이 잘못 되었습니다. 시작일, 종료일, 사유를 모두 입력 하였는지 확인하십시오.");
+            throw new Exception400(Message.INVALID_CREATE_ANNUAL_FORMAT);
         }
     }
 
@@ -122,20 +152,24 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
     }
 
-
     @Transactional
-    public void deleteSchedule(Long id) {
+    public void deleteAnnual(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid schedule id: " + id));
+                .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
+        User user = userService.getUser();
 
-        if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
-            throw new Exception403("접근 권한이 없습니다.");
+        if (!schedule.getCategory().equals(CategoryEnum.ANNUAL)) {
+            throw new Exception400(Message.INVALID_SCHEDULE_CATEGORY_NOT_ANNUAL);
         }
 
         if (EvaluationEnum.CANCELED.equals(schedule.getEvaluation())) {
-            throw new IllegalStateException("이미 취소된 스케줄 입니다.");
+            throw new Exception400(Message.ALREADY_EXISTS_CANCELED_ANNUAL);
         }
+
+        long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+        user.setAnnual((int) (user.getAnnual() + (originalAnnual + 1)));
+        userRepository.save(user);
 
         scheduleRepository.updateEvaluationToCanceled(id);
     }

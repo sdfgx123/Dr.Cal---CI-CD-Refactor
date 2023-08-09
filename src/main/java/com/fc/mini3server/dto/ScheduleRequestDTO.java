@@ -6,10 +6,11 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-@RequiredArgsConstructor
 public class ScheduleRequestDTO {
 
-    @Data
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class createAnnualDTO {
 
         @NotNull
@@ -20,7 +21,6 @@ public class ScheduleRequestDTO {
 
         @NotNull
         private String reason;
-
     }
 
     @NoArgsConstructor

@@ -80,7 +80,7 @@ public class ScheduleController {
 
     @PostMapping("/annual/delete")
     public ResponseEntity<?> deleteAnnualSchedule(@RequestParam Long id) {
-        scheduleService.deleteSchedule(id);
+        scheduleService.deleteAnnual(id);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
