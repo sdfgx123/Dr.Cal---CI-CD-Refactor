@@ -3,7 +3,6 @@ package com.fc.mini3server.service;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.*;
-import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.ScheduleRepository;
 import com.fc.mini3server.repository.UserRepository;
@@ -13,10 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server._core.handler.Message.HOSPITAL_NOT_FOUND;
+import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +35,7 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateUserAuth(Long id, AdminRequestDTO.editAuthDTO requestDTO) {
+    public void updateUserAuth(Long id, editAuthDTO requestDTO) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER));
 
@@ -75,7 +76,7 @@ public class AdminService {
     }
 
     @Transactional
-    public void createDuty(Long id, AdminRequestDTO.createDutyAdminDTO requestDTO) {
+    public void createDuty(Long id, createDutyAdminDTO requestDTO) {
 
         User user = userRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
@@ -116,11 +117,57 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateScheduleEvaluation(Long id, AdminRequestDTO.editEvaluationDTO requestDTO) {
+    public void updateScheduleEvaluation(Long id, editEvaluationDTO requestDTO) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER));
 
-        schedule.updateEvaluation(requestDTO.getEvaluation());
+        if (schedule.getEvaluation().equals(EvaluationEnum.APPROVED) ||
+                schedule.getEvaluation().equals(EvaluationEnum.REJECTED) ||
+                schedule.getEvaluation().equals(EvaluationEnum.CANCELED))
+            throw new Exception400(Message.INVALID_SCHEDULE_EVALUATION);
+
+
+        if (schedule.getCategory().equals(CategoryEnum.DUTY) && requestDTO.getEvaluation().equals(EvaluationEnum.APPROVED)){
+            Schedule originSchedule = scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
+                    schedule.getHospital().getId(), EvaluationEnum.APPROVED, CategoryEnum.DUTY, schedule.getStartDate()).orElseThrow(
+                    () -> new Exception400(NO_DUTY_SCHEDULE_ON_DATE)
+            );
+            Schedule changeSchedule = scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
+                    schedule.getHospital().getId(), EvaluationEnum.APPROVED, CategoryEnum.DUTY, schedule.getEndDate()).orElseThrow(
+                    () -> new Exception400(NO_DUTY_SCHEDULE_ON_DATE)
+            );
+
+            Schedule newSchedule = Schedule.builder()
+                    .user(changeSchedule.getUser())
+                    .hospital(changeSchedule.getHospital())
+                    .category(CategoryEnum.DUTY)
+                    .startDate(schedule.getStartDate())
+                    .endDate(schedule.getStartDate())
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .build();
+
+            Schedule newSchedule2 = Schedule.builder()
+                    .user(schedule.getUser())
+                    .hospital(schedule.getHospital())
+                    .category(CategoryEnum.DUTY)
+                    .startDate(schedule.getEndDate())
+                    .endDate(schedule.getStartDate())
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .build();
+
+            scheduleRepository.saveAll(Arrays.asList(newSchedule, newSchedule2));
+
+            schedule.updateEvaluation(EvaluationEnum.APPROVED);
+            originSchedule.updateEvaluation(EvaluationEnum.CANCELED);
+            changeSchedule.updateEvaluation(EvaluationEnum.CANCELED);
+        }
+
+        if (schedule.getCategory().equals(CategoryEnum.DUTY) && requestDTO.getEvaluation().equals(EvaluationEnum.REJECTED)) {
+            schedule.updateEvaluation(requestDTO.getEvaluation());
+        }
+
+        if (schedule.getCategory().equals(CategoryEnum.ANNUAL))
+            schedule.updateEvaluation(requestDTO.getEvaluation());
     }
 
     @Transactional

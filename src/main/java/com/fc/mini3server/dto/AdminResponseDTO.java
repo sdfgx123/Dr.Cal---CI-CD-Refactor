@@ -87,16 +87,18 @@ public class AdminResponseDTO {
     public static class DutyListDTO {
         private Long scheduleId;
         private String username;
+        private String hospitalName;
         private CategoryEnum category;
         private LevelEnum level;
         private LocalDateTime createdAt;
         private LocalDate startDate;
+        private LocalDate updateDate;
         private EvaluationEnum evaluation;
 
         public static DutyListDTO of(Schedule schedule) {
-            return new DutyListDTO(schedule.getId(), schedule.getUser().getName(),
+            return new DutyListDTO(schedule.getId(), schedule.getUser().getName(), schedule.getHospital().getName(),
                     schedule.getCategory(), schedule.getUser().getLevel(), schedule.getCreatedAt(),
-                    schedule.getStartDate(), schedule.getEvaluation());
+                    schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
         }
 
         public static List<DutyListDTO> listOf(List<Schedule> scheduleList){

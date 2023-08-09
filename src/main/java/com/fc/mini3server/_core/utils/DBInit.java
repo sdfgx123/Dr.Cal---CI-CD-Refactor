@@ -534,26 +534,36 @@ public class DBInit {
                     .endDate(LocalDate.of(2023, 8, 6))
                     .evaluation(EvaluationEnum.APPROVED)
                     .build();
-            Schedule schedule25 = Schedule.builder()
-                    .user(user8)
+
+            Schedule schedule27 = Schedule.builder()
+                    .user(user1)
                     .hospital(hospital1)
                     .category(CategoryEnum.DUTY)
-                    .startDate(LocalDate.of(2023, 8, 7))
-                    .endDate(LocalDate.of(2023, 8, 7))
-                    .evaluation(EvaluationEnum.STANDBY)
+                    .startDate(LocalDate.of(2023, 8, 9))
+                    .endDate(LocalDate.of(2023, 8, 9))
+                    .evaluation(EvaluationEnum.APPROVED)
                     .build();
-            Schedule schedule26 = Schedule.builder()
-                    .user(user9)
+            Schedule schedule28 = Schedule.builder()
+                    .user(user2)
                     .hospital(hospital1)
                     .category(CategoryEnum.DUTY)
-                    .startDate(LocalDate.of(2023, 8, 8))
-                    .endDate(LocalDate.of(2023, 8, 8))
+                    .startDate(LocalDate.of(2023, 8, 10))
+                    .endDate(LocalDate.of(2023, 8, 10))
+                    .evaluation(EvaluationEnum.APPROVED)
+                    .build();
+            Schedule schedule29 = Schedule.builder()
+                    .user(user1)
+                    .hospital(hospital1)
+                    .category(CategoryEnum.DUTY)
+                    .startDate(LocalDate.of(2023, 8, 9))
+                    .endDate(LocalDate.of(2023, 8, 10))
                     .evaluation(EvaluationEnum.STANDBY)
                     .build();
 
             scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2, schedule3, schedule4, schedule5,
                     schedule6, schedule7, schedule8,
-                    schedule21, schedule22, schedule23, schedule24, schedule25, schedule26));
+                    schedule21, schedule22, schedule23, schedule24,
+                    schedule27, schedule28, schedule29));
         };
     }
 }

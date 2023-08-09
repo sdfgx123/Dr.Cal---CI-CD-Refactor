@@ -97,9 +97,9 @@ public class AdminController {
     }
 
     @Operation(summary = "스케줄 승인/반려", description = "STANDBY -> APPROVED, STANDBY -> REJECTED")
-    @PostMapping("/{id}/evaluation")
-    public ResponseEntity<?> editEvaluation(@PathVariable Long id, @RequestBody editEvaluationDTO requestDTO){
-        adminService.updateScheduleEvaluation(id, requestDTO);
+    @PostMapping("/{scheduleId}/evaluation")
+    public ResponseEntity<?> editEvaluation(@PathVariable Long scheduleId, @RequestBody editEvaluationDTO requestDTO){
+        adminService.updateScheduleEvaluation(scheduleId, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
