@@ -32,5 +32,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     boolean existsByHospitalIdAndEvaluationAndCategoryAndEndDate(Long id, EvaluationEnum evaluationEnum, CategoryEnum categoryEnum, LocalDate updateDate);
 
+    boolean existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(Long userId, CategoryEnum category, LocalDate startDate, LocalDate endDate);
 
 }

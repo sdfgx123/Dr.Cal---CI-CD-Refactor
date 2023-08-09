@@ -38,6 +38,10 @@ public class ScheduleService {
             User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new IllegalArgumentException("invalid user id : " + userService.getUser().getId()));
 
+            if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                    user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate()))
+                throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
+
             long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
 
             if (user.getAnnual() >= updateAnnual) {
