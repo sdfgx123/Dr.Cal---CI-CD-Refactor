@@ -73,7 +73,7 @@ public class AdminController {
     @GetMapping("/annual")
     public ResponseEntity<?> findAnnualList(@PageableDefault(size = 10)
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "createdAt", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "updatedAt", direction = Sort.Direction.ASC),
                     @SortDefault(sort = "id", direction = Sort.Direction.ASC)
             }) Pageable pageable){
         final Page<Schedule> scheduleList = adminService.findAnnualList(pageable);
@@ -87,7 +87,7 @@ public class AdminController {
     @GetMapping("/duty")
     public ResponseEntity<?> findDutyList(@PageableDefault(size = 10)
               @SortDefault.SortDefaults({
-                      @SortDefault(sort = "createdAt", direction = Sort.Direction.ASC),
+                      @SortDefault(sort = "updatedAt", direction = Sort.Direction.ASC),
                       @SortDefault(sort = "id", direction = Sort.Direction.ASC)
               }) Pageable pageable){
         final Page<Schedule> scheduleList = adminService.findDutyList(pageable);
@@ -97,9 +97,9 @@ public class AdminController {
     }
 
     @Operation(summary = "스케줄 승인/반려", description = "STANDBY -> APPROVED, STANDBY -> REJECTED")
-    @PostMapping("/{id}/evaluation")
-    public ResponseEntity<?> editEvaluation(@PathVariable Long id, @RequestBody editEvaluationDTO requestDTO){
-        adminService.updateScheduleEvaluation(id, requestDTO);
+    @PostMapping("/{scheduleId}/evaluation")
+    public ResponseEntity<?> editEvaluation(@PathVariable Long scheduleId, @RequestBody editEvaluationDTO requestDTO){
+        adminService.updateScheduleEvaluation(scheduleId, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
@@ -110,11 +110,17 @@ public class AdminController {
         return ResponseEntity.ok(ApiUtils.success(UserListByHospitalIdDTO.listOf(userList)));
     }
 
-
     @Operation(summary = "당직 추가", description = "선택한 당직인원을 실제 당직인원으로 추가한다.")
-    @PostMapping("/{id}/createDuty")
-    public ResponseEntity<?> createDuty(@PathVariable Long id, @RequestBody createDutyAdminDTO requestDTO){
-        adminService.createDuty(id, requestDTO);
+    @PostMapping("/{userId}/createDuty")
+    public ResponseEntity<?> createDuty(@PathVariable Long userId, @RequestBody createDutyAdminDTO requestDTO){
+        adminService.createDuty(userId, requestDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @Operation(summary = "당직 삭제", description = "요청한 날짜에 당직을 삭제한다.")
+    @PostMapping("/{scheduleId}/deleteDuty")
+    public ResponseEntity<?> deleteDuty(@PathVariable Long scheduleId){
+        adminService.deleteDuty(scheduleId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 }

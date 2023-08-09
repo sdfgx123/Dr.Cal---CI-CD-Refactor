@@ -6,6 +6,11 @@ public interface Message {
     String INVALID_USER_STATUS_APPROVED = "재직 중인 계정만 변경 가능합니다.";
     String METHOD_ARGUMENT_TYPE_MISMATCH = "유효하지 않은 파라미터입니다.";
     String NO_USER_DUTY_LEFT = "남은 당직 횟수가 없습니다.";
+    String ALREADY_EXISTS_ON_THAT_DATE = "해당 날짜에 이미 당직이 등록 되어있습니다.";
+    String ALREADY_EXISTS_CHANGE_DUTY_REQUEST = "이미 신청 중인 변경 건이 있습니다.";
+    String NO_DUTY_SCHEDULE_ON_DATE = "바꾸려는 날짜에 당직이 없습니다.";
+    String INVALID_SCHEDULE_EVALUATION = "미처리 된 건만 승인 가능합니다.";
+    String INVALID_SCHEDULE_CATEGORY_NOT_DUTY = "당직 스케줄만 삭제 가능합니다.";
     String INVALID_REGISTER_FORMAT = "요청 형식이 잘못 되었습니다. 올바른 직급, 병원, 또는 부서 번호를 입력 하였는지 확인하십시오.";
     String INVALID_USER_NOT_APPROVED = "인증되지 않은 사용자 입니다.";
     String INVALID_NOT_VALID_TOKEN = "올바른 토큰이 아닙니다.";

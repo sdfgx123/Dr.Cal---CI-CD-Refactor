@@ -3,12 +3,11 @@ package com.fc.mini3server.controller;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Schedule;
-import com.fc.mini3server.dto.ScheduleRequestDTO;
 import com.fc.mini3server.domain.CategoryEnum;
 import com.fc.mini3server.service.ScheduleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +33,7 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule()));
     }
 
+    @Operation(summary = "날짜별 휴가/당직 인원 조회", description = "날짜별로 클릭 시 데이터 출력")
     @GetMapping("/date")
     public ResponseEntity<?> getScheduleByDate(@RequestParam("chooseDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate chooseDate,
                                                  @RequestParam("category") CategoryEnum category){
@@ -52,6 +52,7 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.error(Message.METHOD_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST));
     }
 
+    @Operation(summary = "요청 내역 확인")
     @GetMapping("/{id}")
     public ResponseEntity<?> getScheduleRequestList(@PathVariable Long id){
         List<Schedule> scheduleList = scheduleService.findAllRequestSchedule(id);
@@ -59,26 +60,21 @@ public class ScheduleController {
     }
 
     @PostMapping("annual/{id}/update")
-    public ResponseEntity<?> updateAnnualSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO.createAnnualDTO updateDTO) {
+    public ResponseEntity<?> updateAnnualSchedule(@PathVariable Long id, @RequestBody createAnnualDTO updateDTO) {
         scheduleService.updateAnnual(id, updateDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @PostMapping("duty/{id}/update")
-    public ResponseEntity<?> updateDutySchedule(@PathVariable Long id, @RequestBody ScheduleRequestDTO.createDutyDTO updateDTO) {
-        scheduleService.updateDuty(id, updateDTO);
+    @Operation(summary = "당직 변경 신청", description = "현재 본인의 스케줄에서 변경 요청을 하는 스케줄의 Date를 넣는다.")
+    @PostMapping("duty/{scheduleId}/update")
+    public ResponseEntity<?> changeDutySchedule(@PathVariable Long scheduleId, @RequestBody updateDutyDTO requestDTO) {
+        scheduleService.changeReqDuty(scheduleId, requestDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @PostMapping("/create/annual")
-    public ResponseEntity<ApiUtils.ApiResult<Schedule>> createAnnualSchedule(@RequestBody @Valid ScheduleRequestDTO.createAnnualDTO createAnnualDTO) {
+    public ResponseEntity<ApiUtils.ApiResult<Schedule>> createAnnualSchedule(@RequestBody @Valid createAnnualDTO createAnnualDTO) {
         scheduleService.createAnnualSchedule(createAnnualDTO);
-        return ResponseEntity.ok(ApiUtils.success(null));
-    }
-
-    @PostMapping("/create/duty")
-    public ResponseEntity<ApiUtils.ApiResult<Schedule>> createDutySchedule(@RequestBody @Valid ScheduleRequestDTO.createDutyDTO createDutyDTO) {
-        scheduleService.createDutySchedule(createDutyDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
