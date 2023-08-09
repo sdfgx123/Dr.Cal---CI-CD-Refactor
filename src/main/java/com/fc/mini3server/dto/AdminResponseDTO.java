@@ -103,4 +103,24 @@ public class AdminResponseDTO {
             return scheduleList.stream().map(DutyListDTO::of).collect(Collectors.toList());
         }
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class UserListByHospitalIdDTO {
+        private Long userId;
+        private String username;
+        private LevelEnum level;
+        private int duty;
+
+        public static UserListByHospitalIdDTO of(User user) {
+            return new UserListByHospitalIdDTO(user.getId(), user.getName(), user.getLevel(), user.getDuty());
+        }
+
+        public static List<UserListByHospitalIdDTO> listOf(List<User> userList){
+            return userList.stream().map(UserListByHospitalIdDTO::of).collect(Collectors.toList());
+        }
+
+
+    }
 }
