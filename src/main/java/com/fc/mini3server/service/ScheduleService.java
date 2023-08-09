@@ -130,8 +130,7 @@ public class ScheduleService {
             schedule.setEndDate(updateDTO.getStartDate());
             schedule.setEvaluation(EvaluationEnum.STANDBY);
 
-            Schedule updatedSchedule = scheduleRepository.save(schedule);
-            return updatedSchedule;
+            return scheduleRepository.save(schedule);
 
         } catch (IllegalArgumentException e) {
             throw new Exception400("요청 형식이 잘못 되었습니다. 당직 일자를 제대로 입력 하였는지 확인하십시오.");
