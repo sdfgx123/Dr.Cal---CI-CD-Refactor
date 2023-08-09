@@ -110,11 +110,17 @@ public class AdminController {
         return ResponseEntity.ok(ApiUtils.success(UserListByHospitalIdDTO.listOf(userList)));
     }
 
-
     @Operation(summary = "당직 추가", description = "선택한 당직인원을 실제 당직인원으로 추가한다.")
-    @PostMapping("/{id}/createDuty")
-    public ResponseEntity<?> createDuty(@PathVariable Long id, @RequestBody createDutyAdminDTO requestDTO){
-        adminService.createDuty(id, requestDTO);
+    @PostMapping("/{userId}/createDuty")
+    public ResponseEntity<?> createDuty(@PathVariable Long userId, @RequestBody createDutyAdminDTO requestDTO){
+        adminService.createDuty(userId, requestDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @Operation(summary = "당직 삭제", description = "요청한 날짜에 당직을 삭제한다.")
+    @PostMapping("/{scheduleId}/deleteDuty")
+    public ResponseEntity<?> deleteDuty(@PathVariable Long scheduleId){
+        adminService.deleteDuty(scheduleId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 }

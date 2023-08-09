@@ -122,4 +122,16 @@ public class AdminService {
 
         schedule.updateEvaluation(requestDTO.getEvaluation());
     }
+
+    @Transactional
+    public void deleteDuty(Long id) {
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(
+                () -> new Exception400(String.valueOf(id), INVALID_ID_PARAMETER)
+        );
+
+        if (!schedule.getCategory().equals(CategoryEnum.DUTY))
+            throw new Exception400(Message.INVALID_SCHEDULE_CATEGORY_NOT_DUTY);
+
+        scheduleRepository.delete(schedule);
+    }
 }
