@@ -145,6 +145,11 @@ public class ScheduleService {
             throw new Exception400(Message.ALREADY_EXISTS_CANCELED_ANNUAL);
         }
 
+        long returnAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+        User user = userService.getUser();
+        user.setAnnual((int) (user.getAnnual() + returnAnnual));
+        userRepository.save(user);
+
         scheduleRepository.updateEvaluationToCanceled(id);
     }
 
