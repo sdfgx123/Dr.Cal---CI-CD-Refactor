@@ -38,34 +38,35 @@ public class ScheduleService {
             User user = userRepository.findById(userService.getUser().getId())
                     .orElseThrow(() -> new Exception400("id: " + userService.getUser().getId(), Message.INVALID_ID_PARAMETER));
 
-            if (createAnnualDTO.getStartDate().isAfter(createAnnualDTO.getEndDate())) {
+            if (!createAnnualDTO.getStartDate().isAfter(createAnnualDTO.getEndDate())) {
+                if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                        user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate()))
+                    throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
+
+                long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
+
+                if (user.getAnnual() > 0 && user.getAnnual() >= updateAnnual) {
+                    Schedule schedule = Schedule.builder()
+                            .user(user)
+                            .hospital(user.getHospital())
+                            .category(CategoryEnum.ANNUAL)
+                            .startDate(createAnnualDTO.getStartDate())
+                            .endDate(createAnnualDTO.getEndDate())
+                            .evaluation(EvaluationEnum.STANDBY)
+                            .reason(createAnnualDTO.getReason())
+                            .build();
+
+                    user.usedAnnual((int) updateAnnual);
+                    userRepository.save(user);
+
+                    return scheduleRepository.save(schedule);
+                } else {
+                    throw new Exception400(Message.NO_USER_ANNUAL_LEFT);
+                }
+            } else {
                 throw new Exception400(Message.INVALID_DATE_RANGE);
             }
 
-            if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                    user.getId(), CategoryEnum.ANNUAL, createAnnualDTO.getEndDate(), createAnnualDTO.getStartDate()))
-                throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
-
-            long updateAnnual = ChronoUnit.DAYS.between(createAnnualDTO.getStartDate(), createAnnualDTO.getEndDate());
-
-            if (user.getAnnual() > 0 && user.getAnnual() >= updateAnnual) {
-                Schedule schedule = Schedule.builder()
-                        .user(user)
-                        .hospital(user.getHospital())
-                        .category(CategoryEnum.ANNUAL)
-                        .startDate(createAnnualDTO.getStartDate())
-                        .endDate(createAnnualDTO.getEndDate())
-                        .evaluation(EvaluationEnum.STANDBY)
-                        .reason(createAnnualDTO.getReason())
-                        .build();
-
-                user.usedAnnual((int) updateAnnual);
-                userRepository.save(user);
-
-                return scheduleRepository.save(schedule);
-            } else {
-                throw new Exception400(Message.NO_USER_ANNUAL_LEFT);
-            }
         } catch (IllegalArgumentException e) {
             throw new Exception400(Message.INVALID_CREATE_ANNUAL_FORMAT);
         }
@@ -77,14 +78,24 @@ public class ScheduleService {
             Schedule schedule = scheduleRepository.findById(id)
                     .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
+            if (schedule.getEvaluation() == EvaluationEnum.CANCELED) {
+                throw new Exception400(Message.INVALID_EVALUATION_CANCELED);
+            }
+
             User user = userService.getUser();
 
-            if (scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                    user.getId(), CategoryEnum.ANNUAL, updateDTO.getEndDate(), updateDTO.getStartDate())) {
+            if (updateDTO.getStartDate().isAfter(updateDTO.getEndDate())) {
+                throw new Exception400(Message.INVALID_DATE_RANGE);
+            }
+
+            if ((schedule.getEvaluation() == EvaluationEnum.APPROVED || schedule.getEvaluation() == EvaluationEnum.STANDBY) &&
+                    scheduleRepository.existsByUserIdAndCategoryAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                            user.getId(), CategoryEnum.ANNUAL, updateDTO.getEndDate(), updateDTO.getStartDate())) {
                 throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE_ANNUAL);
             }
 
             long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+            user.setAnnual((int) (user.getAnnual() + (originalAnnual + 1)));
 
             schedule.setStartDate(updateDTO.getStartDate());
             schedule.setEndDate(updateDTO.getEndDate());
@@ -94,8 +105,7 @@ public class ScheduleService {
             long updatedAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
 
             if (originalAnnual != updatedAnnual) {
-                if ((user.getAnnual() + originalAnnual) >= updatedAnnual && user.getAnnual() >= 0) {
-                    user.setAnnual((int) (user.getAnnual() + originalAnnual - updatedAnnual));
+                if (user.getAnnual()>= updatedAnnual && user.getAnnual() >= 0) {
                     user.usedAnnual((int) updatedAnnual);
                     userRepository.save(user);
                 } else {
@@ -146,8 +156,9 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
+        User user = userService.getUser();
 
-        if (!schedule.getUser().getId().equals(userService.getUser().getId())) {
+        if (!schedule.getUser().getId().equals(user.getId())) {
             throw new Exception401(Message.INVALID_NOT_EQUAL_USER);
         }
 
@@ -155,9 +166,8 @@ public class ScheduleService {
             throw new Exception400(Message.ALREADY_EXISTS_CANCELED_ANNUAL);
         }
 
-        long returnAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
-        User user = userService.getUser();
-        user.setAnnual((int) (user.getAnnual() + returnAnnual));
+        long originalAnnual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+        user.setAnnual((int) (user.getAnnual() + (originalAnnual + 1)));
         userRepository.save(user);
 
         scheduleRepository.updateEvaluationToCanceled(id);
