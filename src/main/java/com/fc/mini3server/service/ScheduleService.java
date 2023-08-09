@@ -153,7 +153,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void deleteSchedule(Long id) {
+    public void deleteAnnual(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new Exception400(Message.INVALID_SCHEDULE_PARAMETER));
 
