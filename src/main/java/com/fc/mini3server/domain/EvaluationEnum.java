@@ -4,5 +4,6 @@ public enum EvaluationEnum {
     STANDBY,
     APPROVED,
     REJECTED,
-    CANCELED
+    CANCELED,
+    COMPLETED
 }

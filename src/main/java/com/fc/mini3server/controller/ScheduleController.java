@@ -28,6 +28,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    @Operation(summary = "메인 캘린더 조회", description = "evaluation = APPROVED 인 건만 조회")
     @GetMapping("/")
     public ResponseEntity<?> getApprovedSchedules() {
         return ResponseEntity.ok(ApiUtils.success(scheduleService.getApprovedSchedule()));
@@ -52,13 +53,14 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.error(Message.METHOD_ARGUMENT_TYPE_MISMATCH, HttpStatus.BAD_REQUEST));
     }
 
-    @Operation(summary = "요청 내역 확인")
+    @Operation(summary = "요청 내역 확인", description = "파라미터 userId")
     @GetMapping("/{id}")
     public ResponseEntity<?> getScheduleRequestList(@PathVariable Long id){
         List<Schedule> scheduleList = scheduleService.findAllRequestSchedule(id);
         return ResponseEntity.ok(ApiUtils.success(ScheduleReqListDTO.listOf(scheduleList)));
     }
 
+    @Operation(summary = "연차 변경 신청")
     @PostMapping("annual/{id}/update")
     public ResponseEntity<?> updateAnnualSchedule(@PathVariable Long id, @RequestBody createAnnualDTO updateDTO) {
         scheduleService.updateAnnual(id, updateDTO);
@@ -72,12 +74,14 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @Operation(summary = "연차 등록")
     @PostMapping("/create/annual")
     public ResponseEntity<ApiUtils.ApiResult<Schedule>> createAnnualSchedule(@RequestBody @Valid createAnnualDTO createAnnualDTO) {
         scheduleService.createAnnualSchedule(createAnnualDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @Operation(summary = "연차 삭제")
     @PostMapping("/annual/delete")
     public ResponseEntity<?> deleteAnnualSchedule(@RequestParam Long id) {
         scheduleService.deleteAnnual(id);

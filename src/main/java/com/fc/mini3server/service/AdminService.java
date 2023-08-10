@@ -152,13 +152,13 @@ public class AdminService {
                     .hospital(schedule.getHospital())
                     .category(CategoryEnum.DUTY)
                     .startDate(schedule.getEndDate())
-                    .endDate(schedule.getStartDate())
+                    .endDate(schedule.getEndDate())
                     .evaluation(EvaluationEnum.APPROVED)
                     .build();
 
             scheduleRepository.saveAll(Arrays.asList(newSchedule, newSchedule2));
 
-            schedule.updateEvaluation(EvaluationEnum.APPROVED);
+            schedule.updateEvaluation(EvaluationEnum.COMPLETED);
             originSchedule.updateEvaluation(EvaluationEnum.CANCELED);
             changeSchedule.updateEvaluation(EvaluationEnum.CANCELED);
         }
