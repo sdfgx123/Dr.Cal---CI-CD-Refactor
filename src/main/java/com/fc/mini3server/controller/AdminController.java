@@ -104,9 +104,9 @@ public class AdminController {
     }
 
     @Operation(summary = "병원 별 의사 목록", description = "병원Id를 가지고 당직등록을 위한 사람을 찾는다.")
-    @GetMapping("/{hospitalId}/users")
-    public ResponseEntity<?> findUserListByHospital(@PathVariable Long hospitalId, @RequestParam(required = false, defaultValue = "") List<LevelEnum> levelList){
-        List<User> userList = adminService.findAllUserListByHospitalIdAdmin(hospitalId, levelList);
+    @GetMapping("/hospitalUsers")
+    public ResponseEntity<?> findUserListByHospital(@RequestParam(required = false, defaultValue = "") List<LevelEnum> levelList){
+        List<User> userList = adminService.findAllUserListByHospitalIdAdmin(levelList);
         return ResponseEntity.ok(ApiUtils.success(UserListByHospitalIdDTO.listOf(userList)));
     }
 

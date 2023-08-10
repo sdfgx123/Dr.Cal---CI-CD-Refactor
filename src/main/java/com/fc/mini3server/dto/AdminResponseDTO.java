@@ -114,11 +114,14 @@ public class AdminResponseDTO {
     public static class UserListByHospitalIdDTO {
         private Long userId;
         private String username;
+        private String hospitalName;
+        private String deptName;
         private LevelEnum level;
         private int duty;
 
         public static UserListByHospitalIdDTO of(User user) {
-            return new UserListByHospitalIdDTO(user.getId(), user.getName(), user.getLevel(), user.getDuty());
+            return new UserListByHospitalIdDTO(user.getId(), user.getName(), user.getHospital().getName(),
+                    user.getDept().getName(), user.getLevel(), user.getDuty());
         }
 
         public static List<UserListByHospitalIdDTO> listOf(List<User> userList){
