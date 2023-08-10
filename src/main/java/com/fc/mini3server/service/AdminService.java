@@ -16,22 +16,24 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
-import static com.fc.mini3server._core.handler.Message.HOSPITAL_NOT_FOUND;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 @RequiredArgsConstructor
 @Service
 public class AdminService {
+    private final UserService userService;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
 
     public Page<User> findAllUserListAdmin(Pageable pageable){
-        return userRepository.findByStatusNot(StatusEnum.NOTAPPROVED, pageable);
+        User user = userService.getUser();
+        return userRepository.findByHospitalAndStatusNot(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }
 
     public Page<User> findAllJoinUserListAdmin(Pageable pageable) {
-        return userRepository.findByStatusIs(StatusEnum.NOTAPPROVED, pageable);
+        User user = userService.getUser();
+        return userRepository.findByHospitalAndStatusIs(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }
 
     @Transactional
@@ -64,20 +66,17 @@ public class AdminService {
         user.updateStatus(StatusEnum.RETIRED);
     }
 
-    public List<User> findAllUserListByHospitalIdAdmin(Long hospitalId, List<LevelEnum> levelList) {
-        hospitalRepository.findById(hospitalId).orElseThrow(
-                () -> new Exception400(String.valueOf(hospitalId), HOSPITAL_NOT_FOUND)
-        );
+    public List<User> findAllUserListByHospitalIdAdmin(List<LevelEnum> levelList) {
+        User user = userService.getUser();
 
         if(levelList.isEmpty())
             levelList.addAll(List.of(LevelEnum.values()));
 
-        return userRepository.findAllByHospitalIdAndLevelIn(hospitalId, levelList);
+        return userRepository.findAllByHospitalAndAuthAndLevelIn(user.getHospital(), AuthEnum.USER, levelList);
     }
 
     @Transactional
     public void createDuty(Long id, createDutyAdminDTO requestDTO) {
-
         User user = userRepository.findById(id).orElseThrow(
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
         );
@@ -109,11 +108,13 @@ public class AdminService {
     }
 
     public Page<Schedule> findAnnualList(Pageable pageable) {
-        return scheduleRepository.findByCategoryIsOrderById(CategoryEnum.ANNUAL, pageable);
+        User user = userService.getUser();
+        return scheduleRepository.findByHospitalAndCategoryIsOrderById(user.getHospital(), CategoryEnum.ANNUAL, pageable);
     }
 
     public Page<Schedule> findDutyList(Pageable pageable) {
-        return scheduleRepository.findByCategoryIsOrderById(CategoryEnum.DUTY, pageable);
+        User user = userService.getUser();
+        return scheduleRepository.findByHospitalAndCategoryIsOrderById(user.getHospital(), CategoryEnum.DUTY, pageable);
     }
 
     @Transactional

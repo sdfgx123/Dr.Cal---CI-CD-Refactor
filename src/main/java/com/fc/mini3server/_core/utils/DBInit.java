@@ -181,6 +181,54 @@ public class DBInit {
                     ));
 
             long empNo = 10000000L;
+            User user01 = User.builder()
+                    .empNo(++empNo)
+                    .name("서울대관리자")
+                    .email("admin@doctorcal.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .phone("01012345678")
+                    .hospital(hospital1)
+                    .dept(dept10)
+                    .level(LevelEnum.INTERN)
+                    .auth(AuthEnum.ADMIN)
+                    .status(StatusEnum.APPROVED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(2023,8,10))
+                    .resignedDate(null)
+                    .build();
+            User user02 = User.builder()
+                    .empNo(++empNo)
+                    .name("연세대관리자")
+                    .email("admin2@doctorcal.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .phone("01012345678")
+                    .hospital(hospital2)
+                    .dept(dept21)
+                    .level(LevelEnum.INTERN)
+                    .auth(AuthEnum.ADMIN)
+                    .status(StatusEnum.APPROVED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(2023,8,10))
+                    .resignedDate(null)
+                    .build();
+            User user03 = User.builder()
+                    .empNo(++empNo)
+                    .name("고려대관리자")
+                    .email("admin3@doctorcal.com")
+                    .password(passwordEncoder.encode("1234"))
+                    .phone("01012345678")
+                    .hospital(hospital3)
+                    .dept(dept32)
+                    .level(LevelEnum.INTERN)
+                    .auth(AuthEnum.ADMIN)
+                    .status(StatusEnum.APPROVED)
+                    .annual(15)
+                    .duty(3)
+                    .hiredDate(LocalDate.of(2023,8,10))
+                    .resignedDate(null)
+                    .build();
             User user1 = User.builder()
                     .empNo(++empNo)
                     .name("이익준")
@@ -424,7 +472,8 @@ public class DBInit {
                     .resignedDate(null)
                     .build();
 
-            userRepository.saveAll(Arrays.asList(user1, user2, user3, user4, user5, user6, user7, user8, user9,
+            userRepository.saveAll(Arrays.asList( user01, user02, user03,
+                    user1, user2, user3, user4, user5, user6, user7, user8, user9,
                     user10, user11, user12, user13, user14, user15));
 
             Schedule schedule1 = Schedule.builder()
