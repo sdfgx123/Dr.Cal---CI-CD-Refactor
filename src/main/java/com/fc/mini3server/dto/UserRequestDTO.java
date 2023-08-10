@@ -114,9 +114,14 @@ public class UserRequestDTO {
     @AllArgsConstructor
     @Builder
     public static class updateUserDTO {
+
         private String name;
+
         private Long deptId;
+
+        @Pattern(regexp = "^010\\d{8}$", message = "전화번호 형식이 올바르지 않습니다. 전화번호는 하이픈(-)을 빼고 입력하십시오.")
         private String phone;
+
         private String image;
     }
 }
