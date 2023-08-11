@@ -87,6 +87,10 @@ public class User {
         this.annual -= newAnnual + 1;
     }
 
+    public void recoverAnnual(int annual) {
+        this.annual += annual + 1;
+    }
+
     public void approvedDuty() {
         this.duty = duty - 1;
     }
