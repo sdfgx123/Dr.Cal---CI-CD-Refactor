@@ -2,7 +2,7 @@
 
 ![logo](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/b31a2646-1182-45ef-9bac-7f2c4e6859e9)
 
-# 🏥 닥터칼 (Dr.Cal)
+# 🏥 닥터캘 (Dr.Cal)
 </div>
 <br><br>
 
