@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -167,8 +168,17 @@ public class AdminService {
             schedule.updateEvaluation(requestDTO.getEvaluation());
         }
 
-        if (schedule.getCategory().equals(CategoryEnum.ANNUAL))
+        if (schedule.getCategory().equals(CategoryEnum.ANNUAL) && requestDTO.getEvaluation().equals(EvaluationEnum.APPROVED))
             schedule.updateEvaluation(requestDTO.getEvaluation());
+
+        if (schedule.getCategory().equals(CategoryEnum.ANNUAL) && requestDTO.getEvaluation().equals(EvaluationEnum.REJECTED)) {
+            User user = schedule.getUser();
+
+            long annual = ChronoUnit.DAYS.between(schedule.getStartDate(), schedule.getEndDate());
+            user.recoverAnnual((int) annual);
+
+            schedule.updateEvaluation(requestDTO.getEvaluation());
+        }
     }
 
     @Transactional
