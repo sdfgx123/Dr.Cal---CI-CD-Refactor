@@ -46,7 +46,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final String FILE_DIR = "/images/";
+    private static final String FILE_DIR = "./images/";
     private static final int MAX_FILE_SIZE = 1024 * 1024;
 
     public void registerNewUser(UserRequestDTO.registerDTO registerDTO) {
@@ -167,7 +167,7 @@ public class UserService {
             String fileName = initiateFileName();
             Path destination = Paths.get(FILE_DIR + fileName);
             Files.write(destination, decodedBytes);
-            user.setProfileImageUrl(FILE_DIR + fileName);
+            user.setProfileImageUrl(FILE_DIR.replaceFirst("^\\.", "") + fileName);
         } catch (IOException e) {
             throw new Exception500(IO_EXCEPTION_WHEN_FILE_UPLOADING);
         }
