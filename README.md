@@ -18,9 +18,9 @@
 <br><br>
 
 ## 🗓️ 프로젝트 소개
-> **개요** : 병원의 연차, 당직 스케줄 관리를 하는 프로그램입니다 <br/>
+> **개요** : 대학병원 의사들을 위한 쉽고 빠른 당직, 연차 관리 서비스입니다. <br/>
 > **기간** : 2023. 07. 24. ~ 2023. 08. 11. <br/>
-> **기타** : 패스트캠퍼스 부트캠프의 프론트엔드&백엔드 미니프로젝트 협업으로 만들어진 웹페이지 입니다. <br/>
+> **기타** : 패스트캠퍼스 부트캠프의 프론트엔드&백엔드 미니프로젝트 협업으로 만들어진 서비스입니다. <br/>
 
 <p align=center>
 <img src="https://img.shields.io/github/issues/MINI-TEAM3/mini3-server?style=flat"/>
@@ -111,6 +111,8 @@
 |:-----:|:-------:|
 |<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/d64ad8c1-a633-4ba3-b346-e627814b3f4d" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/6dcf044a-31df-4e70-b34a-50e00edb0197" width=600/>|
 
+<br></br>
+
 #### 3. Admin
 | 회원 권한 수정 |  재직 상태 수정 | 연차 승인/반려 |
 |:--------:|:-----:|:--------:|
@@ -125,10 +127,10 @@
 <br></br>
 
 ## ⚙️ 프로젝트 설정
-### ERD
+### 1️⃣ ERD
 ![image](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/36976315-a826-42a0-a153-c065b4a01ff7)
 <br>
-### 테이블 설계
+### 2️⃣ 테이블 설계
 ```sql
 CREATE TABLE user_tb (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -185,7 +187,7 @@ ALTER TABLE schedule_tb ADD FOREIGN KEY (user_id) REFERENCES user_tb(id);
 ALTER TABLE schedule_tb ADD FOREIGN KEY (hospital_id) REFERENCES hospital_tb(id);
 ALTER TABLE dept_tb ADD FOREIGN KEY (hospital_id) REFERENCES hospital_tb(id);
 ```
-### 패키지 구조
+### 3️⃣ 패키지 구조
 ```markdown
 📦 src
 └─ main
