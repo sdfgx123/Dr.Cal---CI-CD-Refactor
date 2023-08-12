@@ -1,6 +1,6 @@
 <div align=center>
 
-![logo](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/b31a2646-1182-45ef-9bac-7f2c4e6859e9)(https://drcal.netlify.app)
+![logo](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/b31a2646-1182-45ef-9bac-7f2c4e6859e9)
 
 # [🏥 닥터캘 (Dr.Cal)](https://drcal.netlify.app)
 #### 닥터캘을 누르면 배포된 사이트로 이동합니다
