@@ -101,7 +101,7 @@
 <br></br>
 
 #### 2. Schedule
-| 메인캘린더 </br>(당직, 휴가조회) | 당직 변경 |
+| 메인캘린더 (당직, 휴가조회) | 당직 변경 |
 |:---------------------:|:-----:|
 |<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/6dc8ae39-ded3-4a8d-a13b-5d894d63bc51" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/ee680092-f7f3-4084-9523-6ec3bd083a5f" width=600/>|
 
