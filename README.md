@@ -3,7 +3,7 @@
 ![logo](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/b31a2646-1182-45ef-9bac-7f2c4e6859e9)
 
 # [🏥 닥터캘 (Dr.Cal)](https://drcal.netlify.app)
-#### 닥터캘을 누르면 배포된 사이트로 이동합니다
+**닥터캘을 누르면 배포된 사이트로 이동합니다**
 ### [👩‍👩‍👧 Front-End Repository](https://github.com/MINI-TEAM3/client)
 ### [🌐 Dr.Cal(admin)](https://drcal-admin.netlify.app)
 
@@ -13,6 +13,10 @@
 |:----:|:----:|:----:|
 |admin@doctorcal.com|admin2@doctorcal.com|admin3@doctorcal.com|
 |12345678|12345678|12345678|
+
+### 🎞️ 프로젝트 시연 영상
+
+[![Video Label](http://img.youtube.com/vi/-bGH_dDcfH8/0.jpg)](https://youtu.be/-bGH_dDcfH8?si=zWJW0cSp2CfjvPSj)
 
 </div>
 <br><br>
