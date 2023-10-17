@@ -2,14 +2,29 @@
 
 ![logo](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/b31a2646-1182-45ef-9bac-7f2c4e6859e9)
 
-# 🏥 닥터칼 (Dr.Cal)
+# [🏥 닥터캘 (Dr.Cal)](https://drcal.netlify.app)
+**닥터캘을 누르면 배포된 사이트로 이동합니다**
+### [👩‍👩‍👧 Front-End Repository](https://github.com/MINI-TEAM3/client)
+### [🌐 Dr.Cal(admin)](https://drcal-admin.netlify.app)
+
+**``` 회원가입 요청 승인 외에는 사용을 자제해 주세요 ```**
+
+|서울대학교 병원|연세 세브란스 병원|고려대학교 안암병원|
+|:----:|:----:|:----:|
+|admin@doctorcal.com|admin2@doctorcal.com|admin3@doctorcal.com|
+|12345678|12345678|12345678|
+
+### 🎞️ 프로젝트 시연 영상
+
+[![Video Label](http://img.youtube.com/vi/-bGH_dDcfH8/0.jpg)](https://youtu.be/-bGH_dDcfH8?si=zWJW0cSp2CfjvPSj)
+
 </div>
 <br><br>
 
 ## 🗓️ 프로젝트 소개
-> **개요** : 병원의 연차, 당직 스케줄 관리를 하는 프로그램입니다 <br/>
+> **개요** : 대학병원 의사들을 위한 쉽고 빠른 당직, 연차 관리 서비스입니다. <br/>
 > **기간** : 2023. 07. 24. ~ 2023. 08. 11. <br/>
-> **기타** : 패스트캠퍼스 부트캠프의 프론트엔드&백엔드 미니프로젝트 협업으로 만들어진 웹페이지 입니다. <br/>
+> **기타** : 패스트캠퍼스 부트캠프의 프론트엔드&백엔드 미니프로젝트 협업으로 만들어진 서비스입니다. <br/>
 
 <p align=center>
 <img src="https://img.shields.io/github/issues/MINI-TEAM3/mini3-server?style=flat"/>
@@ -75,12 +90,51 @@
 
 </p> <br></br>
 
+## 🖥️ 기능 소개
+#### 1. User
+| 회원가입 |  로그인  |
+|:----:|:-----:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/5faf710e-7299-4233-9dcb-35215189ca62" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/4e42e628-31d6-41ba-b781-9c80824d7097" width=600/>|
+
+<br>
+
+|마이페이지|비밀번호 변경|
+|:-----:|:-----:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/de97bd80-9289-416d-a13f-f2d6614f8535" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/c2edced4-2ab5-4ec0-9f23-6b4c0334006a" width=600/>|
+
+<br></br>
+
+#### 2. Schedule
+| 메인캘린더 (당직, 휴가조회) | 당직 변경 |
+|:---------------------:|:-----:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/6dc8ae39-ded3-4a8d-a13b-5d894d63bc51" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/ee680092-f7f3-4084-9523-6ec3bd083a5f" width=600/>|
+
+<br>
+
+|연차 신청|연차 신청 내역 수정/삭제|
+|:-----:|:-------:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/d64ad8c1-a633-4ba3-b346-e627814b3f4d" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/6dcf044a-31df-4e70-b34a-50e00edb0197" width=600/>|
+
+<br></br>
+
+#### 3. Admin
+| 회원 권한 수정 |  재직 상태 수정 | 연차 승인/반려 |
+|:--------:|:-----:|:--------:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/256b4b44-0520-44c8-b885-77a4dbb254fb" width=400/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/a810b65d-830b-4658-9a8f-64bd7247f536" width=400/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/9a8a75a7-da95-4d63-8b6c-2f3d1ea13bc1" width=400/>|
+
+<br>
+
+| 당직 일정 교환 | 당직 등록/삭제 |
+|:-----:|:-----:|
+|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/74125bb4-d765-466c-af5a-0241c701118f" width=600/>|<img src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/8bf5fa31-076a-42d5-aada-8ec0d0e0abe8" width=600/>|
+
+<br></br>
 
 ## ⚙️ 프로젝트 설정
-### ERD
+### 1️⃣ ERD
 ![image](https://github.com/MINI-TEAM3/mini3-server/assets/128345842/36976315-a826-42a0-a153-c065b4a01ff7)
 <br>
-### 테이블 설계
+### 2️⃣ 테이블 설계
 ```sql
 CREATE TABLE user_tb (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -137,7 +191,7 @@ ALTER TABLE schedule_tb ADD FOREIGN KEY (user_id) REFERENCES user_tb(id);
 ALTER TABLE schedule_tb ADD FOREIGN KEY (hospital_id) REFERENCES hospital_tb(id);
 ALTER TABLE dept_tb ADD FOREIGN KEY (hospital_id) REFERENCES hospital_tb(id);
 ```
-### 패키지 구조
+### 3️⃣ 패키지 구조
 ```markdown
 📦 src
 └─ main
@@ -171,14 +225,3 @@ ALTER TABLE dept_tb ADD FOREIGN KEY (hospital_id) REFERENCES hospital_tb(id);
 <img width="703" alt="스크린샷 2023-08-10 오후 9 45 57" src="https://github.com/MINI-TEAM3/mini3-server/assets/128345842/e2387de8-8e32-48ad-837d-e60522a54ae0">
 
 </p>
-
-## 🖥️ 기능 소개
-#### 1. User
-| 회원가입 |  로그인  | 마이페이지 |비밀번호 변경|
-|:----:|:-----:|:-----:|:-----:|
-#### 2. Schedule
-| 메인캘린더 </br>(당직, 휴가조회) | 연차 등록 | 요청내역 수정 |
-|:---------------------:|:-----:|:-------:|
-#### 3. Admin
-| 회원 권한 수정 | 당직 등록 | 스케줄 승인, 반려 |
-|:--------:|:-----:|:----------:|
