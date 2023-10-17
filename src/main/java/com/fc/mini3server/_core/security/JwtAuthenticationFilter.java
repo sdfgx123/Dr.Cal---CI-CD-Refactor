@@ -50,13 +50,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             StatusEnum statusEnum = StatusEnum.valueOf(status);
             String auth = decodedJWT.getClaim("auth").asString();
             AuthEnum authEnum = AuthEnum.valueOf(auth);
-            String password = decodedJWT.getClaim("password").asString();
 
             User user = User.builder().name(username)
                     .id(id)
                     .status(statusEnum)
                     .auth(authEnum)
-                    .password(password)
                     .build();
 
             PrincipalUserDetail myUserDetails = new PrincipalUserDetail(user);
