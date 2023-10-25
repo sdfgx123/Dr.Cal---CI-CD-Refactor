@@ -23,9 +23,6 @@ public class Work {
     @ManyToOne(optional = false)
     private User user;
 
-    @ManyToOne(optional = false)
-    private Hospital hospital;
-
     @Column(nullable = false)
     private LocalDateTime startTime;
 
