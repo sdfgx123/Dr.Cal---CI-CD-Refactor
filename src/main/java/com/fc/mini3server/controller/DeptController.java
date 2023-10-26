@@ -3,6 +3,7 @@ package com.fc.mini3server.controller;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Dept;
 import com.fc.mini3server.service.DeptService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,8 @@ import static com.fc.mini3server.dto.DeptResponseDTO.*;
 public class DeptController {
     private final DeptService deptService;
 
-    @GetMapping("/{id}/list")
+    @Operation(summary = "병원 과 리스트")
+    @GetMapping("/{id}")
     public ResponseEntity<?> findAll(@PathVariable Long id){
         final List<Dept> deptList = deptService.findAll(id);
         return ResponseEntity.ok(ApiUtils.success(DeptListDTO.listOf(deptList)));

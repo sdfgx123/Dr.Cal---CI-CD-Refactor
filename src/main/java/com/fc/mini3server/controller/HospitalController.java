@@ -3,6 +3,7 @@ package com.fc.mini3server.controller;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Hospital;
 import com.fc.mini3server.service.HospitalService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,8 @@ public class HospitalController {
 
     private final HospitalService hospitalService;
 
-    @GetMapping("/list")
+    @Operation(summary = "병원 정보 리스트")
+    @GetMapping()
     public ResponseEntity<?> findAll(){
         final List<Hospital> hospitalList = hospitalService.findAll();
         return ResponseEntity.ok(ApiUtils.success(HospitalListDTO.listOf(hospitalList)));
