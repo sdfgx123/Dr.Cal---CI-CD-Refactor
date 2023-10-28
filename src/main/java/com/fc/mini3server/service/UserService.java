@@ -10,6 +10,7 @@ import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.repository.DeptRepository;
 import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.UserRepository;
+import com.fc.mini3server.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
+    private final WorkRepository workRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -125,6 +127,14 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400(INVALID_NO_TOKEN_MATCHED_WITH_USER));
         return user;
+    }
+
+    public Work getWorkInfoWithUser(User user) {
+        LocalDate today = LocalDate.now();
+        Work work = workRepository.findByUserIdAndStartTimeBetween(
+                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
+        );
+        return work;
     }
 
     private void validateOldPassword(User user, String oldPassword) {

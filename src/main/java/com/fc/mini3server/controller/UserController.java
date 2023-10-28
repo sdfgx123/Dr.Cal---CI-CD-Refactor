@@ -3,6 +3,7 @@ package com.fc.mini3server.controller;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.User;
+import com.fc.mini3server.domain.Work;
 import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.service.UserService;
@@ -57,11 +58,12 @@ public class UserController {
     }
 
     @GetMapping("/myPage")
-    public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO>> myPage() {
+    public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO.MyPageDTO>> myPage() {
         User user = userService.getUser();
-        UserResponseDTO responseDTO = UserResponseDTO.of(user);
+        Work work = userService.getWorkInfoWithUser(user);
+        UserResponseDTO.MyPageDTO myPageDTO = UserResponseDTO.MyPageDTO.of(user, work);
         log.info("유저 상세정보 호출 | 호출 대상 유저 : " + user.getEmail());
-        return ResponseEntity.ok(ApiUtils.success(responseDTO));
+        return ResponseEntity.ok(ApiUtils.success(myPageDTO));
     }
 
     @PostMapping("/editUser")
