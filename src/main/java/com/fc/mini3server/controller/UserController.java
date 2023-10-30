@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -64,6 +65,13 @@ public class UserController {
         UserResponseDTO.MyPageDTO myPageDTO = UserResponseDTO.MyPageDTO.of(user, work);
         log.info("유저 상세정보 호출 | 호출 대상 유저 : " + user.getEmail());
         return ResponseEntity.ok(ApiUtils.success(myPageDTO));
+    }
+
+    @GetMapping("/myPage/work")
+    public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO.MyPageWorkDTO>> myPageWork(Pageable pageable) {
+        User user = userService.getUser();
+        UserResponseDTO.MyPageWorkDTO myPageWorkDTO = userService.getMyPageWork(user, pageable);
+        return ResponseEntity.ok(ApiUtils.success(myPageWorkDTO));
     }
 
     @PostMapping("/editUser")
