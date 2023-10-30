@@ -7,6 +7,7 @@ import com.fc.mini3server._core.security.JwtTokenProvider;
 import com.fc.mini3server._core.security.PrincipalUserDetail;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.UserRequestDTO;
+import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.repository.DeptRepository;
 import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.UserRepository;
@@ -14,6 +15,8 @@ import com.fc.mini3server.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,10 +29,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.fc.mini3server._core.handler.Message.*;
 
@@ -135,6 +142,44 @@ public class UserService {
                 user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
         );
         return work;
+    }
+
+    public UserResponseDTO.MyPageWorkDTO getMyPageWork(User user, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfweek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        Duration dayWork = calculateWorkTime(user, today, today);
+        Duration weekWork = calculateWorkTime(user, startOfweek, endOfWeek);
+        Duration monthWork = calculateWorkTime(user, startOfMonth, endOfMonth);
+
+        Page<Work> worksPage = workRepository.findByUserAndStartTimeBetween(user, startOfweek, endOfWeek, pageable);
+        List<UserResponseDTO.WorkDTO> works = worksPage.stream()
+                .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), calculateWorkTimeForSingleWork(work)))
+                .collect(Collectors.toList());
+
+        return new UserResponseDTO.MyPageWorkDTO(dayWork, weekWork, monthWork, works);
+    }
+
+    private Duration calculateWorkTimeForSingleWork(Work work) {
+        LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
+        return Duration.between(work.getStartTime(), endTime);
+    }
+
+    private Duration calculateWorkTime(User user, LocalDate start, LocalDate end) {
+        List<Work> works = workRepository.findByUserIdAndStartTimeBetween(user, start.atStartOfDay(), end.atTime(23, 59, 59));
+
+        Duration totalDuration = Duration.ZERO;
+
+        for (Work work : works) {
+            LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
+            Duration duration = Duration.between(work.getStartTime(), endTime);
+            totalDuration = totalDuration.plus(duration);
+        }
+
+        return totalDuration;
     }
 
     private void validateOldPassword(User user, String oldPassword) {
