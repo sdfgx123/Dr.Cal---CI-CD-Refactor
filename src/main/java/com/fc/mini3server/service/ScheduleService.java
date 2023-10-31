@@ -10,10 +10,12 @@ import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
 import com.fc.mini3server.repository.ScheduleRepository;
 import com.fc.mini3server.repository.UserRepository;
+import com.fc.mini3server.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final WorkRepository workRepository;
     private final UserService userService;
 
     public List<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule() {
@@ -197,5 +200,20 @@ public class ScheduleService {
         );
 
         return scheduleRepository.findByUserId(id);
+    }
+
+    public void startWork(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다."));
+        Work work = new Work();
+        work.setUser(user);
+        work.setStartTime(LocalDateTime.now());
+        workRepository.save(work);
+    }
+
+    public void endWork(Long userId) {
+        Work work = workRepository.findTopByUserIdOrderByStartTimeDesc(userId)
+                        .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다."));
+        work.setEndTime(LocalDateTime.now());
+        workRepository.save(work);
     }
 }
