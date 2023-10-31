@@ -75,9 +75,9 @@ public class UserResponseDTO {
     @Getter
     @Builder
     public static class MyPageWorkDTO {
-        private Duration dayWork;
-        private Duration weekWork;
-        private Duration monthWork;
+        private String dayWork;
+        private String weekWork;
+        private String monthWork;
         private List<WorkDTO> works;
     }
 
@@ -88,6 +88,6 @@ public class UserResponseDTO {
     public static class WorkDTO {
         private LocalDateTime startTime;
         private LocalDateTime endTime;
-        private Duration workTime;
+        private String workTime;
     }
 }
