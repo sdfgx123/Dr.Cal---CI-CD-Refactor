@@ -138,7 +138,7 @@ public class UserService {
 
     public Work getWorkInfoWithUser(User user) {
         LocalDate today = LocalDate.now();
-        Work work = workRepository.findByUserIdAndStartTimeBetween(
+        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
                 user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
         );
         return work;
@@ -151,16 +151,25 @@ public class UserService {
         LocalDate startOfMonth = today.withDayOfMonth(1);
         LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-        Duration dayWork = calculateWorkTime(user, today, today);
-        Duration weekWork = calculateWorkTime(user, startOfweek, endOfWeek);
-        Duration monthWork = calculateWorkTime(user, startOfMonth, endOfMonth);
+        String dayWork = parseDuration(calculateWorkTime(user, today, today));
+        String weekWork = parseDuration(calculateWorkTime(user, startOfweek, endOfWeek));
+        String monthWork = parseDuration(calculateWorkTime(user, startOfMonth, endOfMonth));
 
-        Page<Work> worksPage = workRepository.findByUserAndStartTimeBetween(user, startOfweek, endOfWeek, pageable);
+        Page<Work> worksPage = workRepository.findByUserAndStartTimeBetween(user, startOfweek.atStartOfDay(), endOfWeek.atTime(23, 59, 59), pageable);
         List<UserResponseDTO.WorkDTO> works = worksPage.stream()
-                .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), calculateWorkTimeForSingleWork(work)))
+                .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), parseDuration(calculateWorkTimeForSingleWork(work))))
                 .collect(Collectors.toList());
 
         return new UserResponseDTO.MyPageWorkDTO(dayWork, weekWork, monthWork, works);
+    }
+
+    private String parseDuration(Duration duration) {
+        Long totalSeconds = duration.getSeconds();
+        Long hours = totalSeconds / 3600;
+        Long minutes = (totalSeconds % 3600) / 60;
+        Long seconds = totalSeconds % 60;
+
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
 
     private Duration calculateWorkTimeForSingleWork(Work work) {
@@ -169,7 +178,8 @@ public class UserService {
     }
 
     private Duration calculateWorkTime(User user, LocalDate start, LocalDate end) {
-        List<Work> works = workRepository.findByUserIdAndStartTimeBetween(user, start.atStartOfDay(), end.atTime(23, 59, 59));
+        Long userId = user.getId();
+        List<Work> works = workRepository.findAllByUserIdAndStartTimeBetween(userId, start.atStartOfDay(), end.atTime(23, 59, 59));
 
         Duration totalDuration = Duration.ZERO;
 
