@@ -4,10 +4,14 @@ import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.CategoryEnum;
+import com.fc.mini3server.domain.User;
+import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.service.ScheduleService;
+import com.fc.mini3server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +31,7 @@ import static com.fc.mini3server.dto.ScheduleResponseDTO.*;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final UserService userService;
 
     @Operation(summary = "메인 캘린더 조회", description = "evaluation = APPROVED 인 건만 조회")
     @GetMapping("/")
@@ -88,4 +93,17 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @PostMapping("/on")
+    public ResponseEntity<ApiUtils.ApiResult<String>> startWork() {
+        Long userId = userService.getUser().getId();
+        scheduleService.startWork(userId);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
+    @PostMapping("/off")
+    public ResponseEntity<ApiUtils.ApiResult<String>> endWork() {
+        Long userId = userService.getUser().getId();
+        scheduleService.endWork(userId);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 }
