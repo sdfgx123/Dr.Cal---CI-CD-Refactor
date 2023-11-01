@@ -7,12 +7,16 @@ import com.fc.mini3server._core.security.JwtTokenProvider;
 import com.fc.mini3server._core.security.PrincipalUserDetail;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.UserRequestDTO;
+import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.repository.DeptRepository;
 import com.fc.mini3server.repository.HospitalRepository;
 import com.fc.mini3server.repository.UserRepository;
+import com.fc.mini3server.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,10 +29,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.fc.mini3server._core.handler.Message.*;
 
@@ -41,6 +49,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
+    private final WorkRepository workRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -125,6 +134,62 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new Exception400(INVALID_NO_TOKEN_MATCHED_WITH_USER));
         return user;
+    }
+
+    public Work getWorkInfoWithUser(User user) {
+        LocalDate today = LocalDate.now();
+        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
+                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
+        );
+        return work;
+    }
+
+    public UserResponseDTO.MyPageWorkDTO getMyPageWork(User user, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfweek = today.with(DayOfWeek.MONDAY);
+        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        String dayWork = parseDuration(calculateWorkTime(user, today, today));
+        String weekWork = parseDuration(calculateWorkTime(user, startOfweek, endOfWeek));
+        String monthWork = parseDuration(calculateWorkTime(user, startOfMonth, endOfMonth));
+
+        Page<Work> worksPage = workRepository.findByUserAndStartTimeBetween(user, startOfweek.atStartOfDay(), endOfWeek.atTime(23, 59, 59), pageable);
+        List<UserResponseDTO.WorkDTO> works = worksPage.stream()
+                .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), parseDuration(calculateWorkTimeForSingleWork(work))))
+                .collect(Collectors.toList());
+
+        return new UserResponseDTO.MyPageWorkDTO(dayWork, weekWork, monthWork, works);
+    }
+
+    private String parseDuration(Duration duration) {
+        Long totalSeconds = duration.getSeconds();
+        Long hours = totalSeconds / 3600;
+        Long minutes = (totalSeconds % 3600) / 60;
+        Long seconds = totalSeconds % 60;
+
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    private Duration calculateWorkTimeForSingleWork(Work work) {
+        LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
+        return Duration.between(work.getStartTime(), endTime);
+    }
+
+    private Duration calculateWorkTime(User user, LocalDate start, LocalDate end) {
+        Long userId = user.getId();
+        List<Work> works = workRepository.findAllByUserIdAndStartTimeBetween(userId, start.atStartOfDay(), end.atTime(23, 59, 59));
+
+        Duration totalDuration = Duration.ZERO;
+
+        for (Work work : works) {
+            LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
+            Duration duration = Duration.between(work.getStartTime(), endTime);
+            totalDuration = totalDuration.plus(duration);
+        }
+
+        return totalDuration;
     }
 
     private void validateOldPassword(User user, String oldPassword) {
