@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
+import static com.fc.mini3server.dto.AdminResponseDTO.AdminUserListDTO;
 
 @RequiredArgsConstructor
 @Service
@@ -27,7 +28,7 @@ public class AdminService {
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
 
-    public Page<User> findAllUserListAdmin(Pageable pageable){
+    public Page<AdminUserListDTO> findAllUserListAdmin(Pageable pageable){
         User user = userService.getUser();
         return userRepository.findByHospitalAndStatusNot(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }

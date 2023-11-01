@@ -1,15 +1,20 @@
 package com.fc.mini3server.repository;
 
-import com.fc.mini3server.domain.AuthEnum;
-import com.fc.mini3server.domain.Hospital;
-import com.fc.mini3server.domain.LevelEnum;
-import com.fc.mini3server.domain.User;
+import com.fc.mini3server.domain.*;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
 import static com.fc.mini3server.domain.QUser.user;
+import static com.fc.mini3server.dto.AdminResponseDTO.AdminUserListDTO;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -25,5 +30,50 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.level.in(level)
                 )
                 .fetch();
+    }
+
+    @Override
+    public Page<AdminUserListDTO> findByHospitalAndStatusNot(Hospital hospital, StatusEnum status, Pageable pageable) {
+
+        NumberExpression<Integer> statusSort = new CaseBuilder()
+                .when(user.status.eq(StatusEnum.APPROVED)).then(1)
+                .when(user.status.eq(StatusEnum.RETIRED)).then(2)
+                .otherwise(1);
+
+        List<AdminUserListDTO> content = queryFactory
+                .select(
+                        Projections.constructor(AdminUserListDTO.class,
+                                user.id,
+                                user.name,
+                                user.phone,
+                                user.hospital.name,
+                                user.dept.name,
+                                user.level,
+                                user.auth,
+                                user.status
+                        )
+                )
+                .from(user)
+                .where(
+                        user.hospital.eq(hospital),
+                        user.status.ne(status)
+                )
+                .orderBy(
+                        user.createdAt.desc(),
+                        statusSort.asc()
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> count = queryFactory
+                .select(user.count())
+                .from(user)
+                .where(
+                        user.hospital.eq(hospital),
+                        user.status.ne(status)
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

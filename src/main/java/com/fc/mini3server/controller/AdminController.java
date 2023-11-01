@@ -30,11 +30,10 @@ public class AdminController {
 
     @Operation(summary = "사용자 관리", description = "디폴트: 최신순(createdAt) + 퇴사 state를 가진 User는 가장 뒤로 정렬")
     @GetMapping("/users")
-    public ResponseEntity<?> findAllUsers(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        final Page<User> userList = adminService.findAllUserListAdmin(pageable);
+    public ResponseEntity<?> findAllUsers(@PageableDefault(size = 10) Pageable pageable) {
+        final Page<AdminUserListDTO> userList = adminService.findAllUserListAdmin(pageable);
         return ResponseEntity.ok(ApiUtils.success(
-                userList.getTotalPages(),
-                AdminUserListDTO.listOf(userList.getContent()))
+                userList.getTotalPages(), userList.getContent())
         );
     }
 
