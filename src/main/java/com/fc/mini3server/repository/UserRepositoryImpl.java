@@ -15,6 +15,7 @@ import java.util.List;
 
 import static com.fc.mini3server.domain.QUser.user;
 import static com.fc.mini3server.dto.AdminResponseDTO.AdminUserListDTO;
+import static com.fc.mini3server.dto.AdminResponseDTO.joinReqListDTO;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -73,6 +74,36 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.hospital.eq(hospital),
                         user.status.ne(status)
                 );
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    @Override
+    public Page<joinReqListDTO> findByHospitalAndStatusIs(Hospital hospital, StatusEnum status, Pageable pageable) {
+        List<joinReqListDTO> content = queryFactory
+                .select(Projections.constructor(joinReqListDTO.class,
+                        user.id,
+                        user.name,
+                        user.phone,
+                        user.hospital.name,
+                        user.dept.name,
+                        user.level,
+                        user.status))
+                .from(user)
+                .where(
+                        user.hospital.eq(hospital),
+                        user.status.eq(status)
+                )
+                .orderBy(user.createdAt.desc())
+                .fetch();
+
+        JPAQuery<Long> count =
+                queryFactory.select(user.count())
+                        .from(user)
+                        .where(
+                                user.hospital.eq(hospital),
+                                user.status.eq(status)
+                        );
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }

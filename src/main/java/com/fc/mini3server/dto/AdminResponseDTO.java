@@ -37,15 +37,6 @@ public class AdminResponseDTO {
         private String deptName;
         private LevelEnum level;
         private StatusEnum status;
-
-        public static joinReqListDTO of(User user) {
-            return new joinReqListDTO(user.getId(), user.getName(), user.getPhone(),
-                    user.getHospital().getName(), user.getDept().getName(), user.getLevel(), user.getStatus());
-        }
-
-        public static List<joinReqListDTO> listOf(List<User> userList) {
-            return userList.stream().map(joinReqListDTO::of).collect(Collectors.toList());
-        }
     }
 
     @NoArgsConstructor

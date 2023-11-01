@@ -37,13 +37,12 @@ public class AdminController {
         );
     }
 
-    @Operation(summary = "회원 가입 요청", description = "디폴트: 최신순(createdAt)")
+    @Operation(summary = "회원 가입 요청 페이지", description = "디폴트: 최신순(createdAt)")
     @GetMapping("/register")
-    public ResponseEntity<?> joinUserList(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        final Page<User> joinList = adminService.findAllJoinUserListAdmin(pageable);
+    public ResponseEntity<?> joinUserList(@PageableDefault(size = 10) Pageable pageable) {
+        final Page<joinReqListDTO> joinList = adminService.findAllJoinUserListAdmin(pageable);
         return ResponseEntity.ok(ApiUtils.success(
-                joinList.getTotalPages(),
-                joinReqListDTO.listOf(joinList.getContent()))
+                joinList.getTotalPages(), joinList.getContent())
         );
     }
 
