@@ -25,15 +25,6 @@ public class AdminResponseDTO {
         private LevelEnum level;
         private AuthEnum auth;
         private StatusEnum status;
-
-        public static AdminUserListDTO of(User user) {
-            return new AdminUserListDTO(user.getId(), user.getName(), user.getPhone(), user.getHospital().getName(),
-                    user.getDept().getName(), user.getLevel(), user.getAuth(), user.getStatus());
-        }
-
-        public static List<AdminUserListDTO> listOf(List<User> users){
-            return users.stream().map(AdminUserListDTO::of).collect(Collectors.toList());
-        }
     }
 
     @NoArgsConstructor
@@ -47,15 +38,6 @@ public class AdminResponseDTO {
         private String deptName;
         private LevelEnum level;
         private StatusEnum status;
-
-        public static joinReqListDTO of(User user) {
-            return new joinReqListDTO(user.getId(), user.getName(), user.getPhone(),
-                    user.getHospital().getName(), user.getDept().getName(), user.getLevel(), user.getStatus());
-        }
-
-        public static List<joinReqListDTO> listOf(List<User> userList) {
-            return userList.stream().map(joinReqListDTO::of).collect(Collectors.toList());
-        }
     }
 
     @NoArgsConstructor
@@ -78,7 +60,7 @@ public class AdminResponseDTO {
                     schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
         }
 
-        public static List<AdminAnnualListDTO> listOf(List<Schedule> scheduleList){
+        public static List<AdminAnnualListDTO> listOf(List<Schedule> scheduleList) {
             return scheduleList.stream().map(AdminAnnualListDTO::of).collect(Collectors.toList());
         }
     }
@@ -104,7 +86,7 @@ public class AdminResponseDTO {
                     schedule.getStartDate(), schedule.getEndDate(), schedule.getEvaluation());
         }
 
-        public static List<DutyListDTO> listOf(List<Schedule> scheduleList){
+        public static List<DutyListDTO> listOf(List<Schedule> scheduleList) {
             return scheduleList.stream().map(DutyListDTO::of).collect(Collectors.toList());
         }
     }
@@ -125,7 +107,7 @@ public class AdminResponseDTO {
                     user.getDept().getName(), user.getLevel(), user.getDuty());
         }
 
-        public static List<UserListByHospitalIdDTO> listOf(List<User> userList){
+        public static List<UserListByHospitalIdDTO> listOf(List<User> userList) {
             return userList.stream().map(UserListByHospitalIdDTO::of).collect(Collectors.toList());
         }
     }

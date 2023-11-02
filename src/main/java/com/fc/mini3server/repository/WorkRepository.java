@@ -14,5 +14,6 @@ public interface WorkRepository extends JpaRepository<Work, Long>, WorkRepositor
     Work findFirstByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
     List<Work> findAllByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
     Page<Work> findByUserAndStartTimeBetween(User user, LocalDateTime startOfweek, LocalDateTime endOfweek, Pageable pageable);
+    Page<Work> findByUserOrderByStartTimeDesc(User user, Pageable pageable);
     Optional<Work> findTopByUserIdOrderByStartTimeDesc(Long userId);
 }

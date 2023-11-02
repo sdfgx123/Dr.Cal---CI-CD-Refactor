@@ -41,8 +41,14 @@ public class UserResponseDTO {
             int flag;
 
             if (work != null) {
-                workStart = work.getStartTime();
-                flag = 1;
+                if (work.getEndTime() == null) {
+                    workStart = work.getStartTime();
+                    flag = 1;
+                }
+                else  {
+                    workStart = work.getStartTime();
+                    flag = 0;
+                }
             }
             else {
                 flag = 0;

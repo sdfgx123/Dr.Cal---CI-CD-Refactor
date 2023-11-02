@@ -3,7 +3,9 @@ package com.fc.mini3server.service;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.*;
-import com.fc.mini3server.repository.*;
+import com.fc.mini3server.repository.HospitalRepository;
+import com.fc.mini3server.repository.ScheduleRepository;
+import com.fc.mini3server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +18,8 @@ import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
-import static com.fc.mini3server.dto.AdminResponseDTO.UserWorkListDTO;
+import static com.fc.mini3server.dto.AdminResponseDTO.AdminUserListDTO;
+import static com.fc.mini3server.dto.AdminResponseDTO.joinReqListDTO;
 
 @RequiredArgsConstructor
 @Service
@@ -25,15 +28,13 @@ public class AdminService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
-    private final DeptRepository deptRepository;
-    private final WorkRepository workRepository;
 
-    public Page<User> findAllUserListAdmin(Pageable pageable) {
+    public Page<AdminUserListDTO> findAllUserListAdmin(Pageable pageable) {
         User user = userService.getUser();
         return userRepository.findByHospitalAndStatusNot(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }
 
-    public Page<User> findAllJoinUserListAdmin(Pageable pageable) {
+    public Page<joinReqListDTO> findAllJoinUserListAdmin(Pageable pageable) {
         User user = userService.getUser();
         return userRepository.findByHospitalAndStatusIs(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }
@@ -192,16 +193,5 @@ public class AdminService {
             throw new Exception400(Message.INVALID_SCHEDULE_CATEGORY_NOT_DUTY);
 
         scheduleRepository.delete(schedule);
-    }
-
-    public Page<UserWorkListDTO> findUserWorkList(LevelEnum level, String dept, Pageable pageable) {
-        User user = userService.getUser();
-
-        if (!deptRepository.existsByNameAndHospital(dept, user.getHospital()))
-            throw new Exception400(DEPT_NOT_FOUND);
-
-        final Page<UserWorkListDTO> works = workRepository.findUserWorkListByHospital(level, dept, user.getHospital(), pageable);
-
-        return null;
     }
 }

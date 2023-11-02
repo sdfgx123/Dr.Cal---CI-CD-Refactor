@@ -34,6 +34,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -146,16 +147,16 @@ public class UserService {
 
     public UserResponseDTO.MyPageWorkDTO getMyPageWork(User user, Pageable pageable) {
         LocalDate today = LocalDate.now();
-        LocalDate startOfweek = today.with(DayOfWeek.MONDAY);
-        LocalDate endOfWeek = today.with(DayOfWeek.SUNDAY);
+        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
         LocalDate startOfMonth = today.withDayOfMonth(1);
         LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
         String dayWork = parseDuration(calculateWorkTime(user, today, today));
-        String weekWork = parseDuration(calculateWorkTime(user, startOfweek, endOfWeek));
+        String weekWork = parseDuration(calculateWorkTime(user, startOfWeek, endOfWeek));
         String monthWork = parseDuration(calculateWorkTime(user, startOfMonth, endOfMonth));
 
-        Page<Work> worksPage = workRepository.findByUserAndStartTimeBetween(user, startOfweek.atStartOfDay(), endOfWeek.atTime(23, 59, 59), pageable);
+        Page<Work> worksPage = workRepository.findByUserOrderByStartTimeDesc(user, pageable);
         List<UserResponseDTO.WorkDTO> works = worksPage.stream()
                 .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), parseDuration(calculateWorkTimeForSingleWork(work))))
                 .collect(Collectors.toList());
