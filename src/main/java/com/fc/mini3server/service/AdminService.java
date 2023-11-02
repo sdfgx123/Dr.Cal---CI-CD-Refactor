@@ -3,9 +3,7 @@ package com.fc.mini3server.service;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.*;
-import com.fc.mini3server.repository.HospitalRepository;
-import com.fc.mini3server.repository.ScheduleRepository;
-import com.fc.mini3server.repository.UserRepository;
+import com.fc.mini3server.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +16,7 @@ import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
+import static com.fc.mini3server.dto.AdminResponseDTO.UserWorkListDTO;
 
 @RequiredArgsConstructor
 @Service
@@ -26,8 +25,10 @@ public class AdminService {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
+    private final DeptRepository deptRepository;
+    private final WorkRepository workRepository;
 
-    public Page<User> findAllUserListAdmin(Pageable pageable){
+    public Page<User> findAllUserListAdmin(Pageable pageable) {
         User user = userService.getUser();
         return userRepository.findByHospitalAndStatusNot(user.getHospital(), StatusEnum.NOTAPPROVED, pageable);
     }
@@ -70,7 +71,7 @@ public class AdminService {
     public List<User> findAllUserListByHospitalIdAdmin(List<LevelEnum> levelList) {
         User user = userService.getUser();
 
-        if(levelList.isEmpty())
+        if (levelList.isEmpty())
             levelList.addAll(List.of(LevelEnum.values()));
 
         return userRepository.findAllByHospitalAndAuthAndLevelIn(user.getHospital(), AuthEnum.USER, levelList);
@@ -82,7 +83,7 @@ public class AdminService {
                 () -> new Exception400(String.valueOf(id), Message.INVALID_ID_PARAMETER)
         );
 
-        if (user.getDuty() <= 0){
+        if (user.getDuty() <= 0) {
             throw new Exception400(String.valueOf(id), Message.NO_USER_DUTY_LEFT);
         }
 
@@ -90,7 +91,7 @@ public class AdminService {
                 () -> new Exception400(String.valueOf(user.getHospital().getId()), Message.HOSPITAL_NOT_FOUND)
         );
 
-        if(scheduleRepository.existsScheduleByHospitalIdAndStartDateAndCategoryAndEvaluation(
+        if (scheduleRepository.existsScheduleByHospitalIdAndStartDateAndCategoryAndEvaluation(
                 user.getHospital().getId(), requestDTO.getChooseDate(), CategoryEnum.DUTY, EvaluationEnum.APPROVED))
             throw new Exception400(Message.ALREADY_EXISTS_ON_THAT_DATE);
 
@@ -129,7 +130,7 @@ public class AdminService {
             throw new Exception400(Message.INVALID_SCHEDULE_EVALUATION);
 
 
-        if (schedule.getCategory().equals(CategoryEnum.DUTY) && requestDTO.getEvaluation().equals(EvaluationEnum.APPROVED)){
+        if (schedule.getCategory().equals(CategoryEnum.DUTY) && requestDTO.getEvaluation().equals(EvaluationEnum.APPROVED)) {
             Schedule originSchedule = scheduleRepository.findByHospitalIdAndEvaluationAndCategoryAndStartDate(
                     schedule.getHospital().getId(), EvaluationEnum.APPROVED, CategoryEnum.DUTY, schedule.getStartDate()).orElseThrow(
                     () -> new Exception400(NO_DUTY_SCHEDULE_ON_DATE)
@@ -191,5 +192,16 @@ public class AdminService {
             throw new Exception400(Message.INVALID_SCHEDULE_CATEGORY_NOT_DUTY);
 
         scheduleRepository.delete(schedule);
+    }
+
+    public Page<UserWorkListDTO> findUserWorkList(LevelEnum level, String dept, Pageable pageable) {
+        User user = userService.getUser();
+
+        if (!deptRepository.existsByNameAndHospital(dept, user.getHospital()))
+            throw new Exception400(DEPT_NOT_FOUND);
+
+        final Page<UserWorkListDTO> works = workRepository.findUserWorkListByHospital(level, dept, user.getHospital(), pageable);
+
+        return null;
     }
 }

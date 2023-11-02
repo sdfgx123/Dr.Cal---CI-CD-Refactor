@@ -123,4 +123,22 @@ public class AdminController {
         adminService.deleteDuty(scheduleId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @GetMapping("/work/dashboard")
+    public ResponseEntity<?> workDashboard(
+            @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
+            @RequestParam("dept") String dept, @PageableDefault(size = 10) Pageable pageable){
+        // TODO: Spring Batch로 데이터 가공 후 가져오기
+        return null;
+    }
+
+    @GetMapping("/work")
+    public ResponseEntity<?> work(
+            @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
+            @RequestParam("dept") String dept, @PageableDefault(size = 10) Pageable pageable){
+        final Page<UserWorkListDTO> userWorkList = adminService.findUserWorkList(level, dept, pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                userWorkList.getTotalPages(), userWorkList.getContent()
+        ));
+    }
 }

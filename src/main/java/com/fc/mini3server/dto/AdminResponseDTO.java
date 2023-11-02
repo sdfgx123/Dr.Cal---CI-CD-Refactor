@@ -4,6 +4,7 @@ import com.fc.mini3server.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -127,7 +128,19 @@ public class AdminResponseDTO {
         public static List<UserListByHospitalIdDTO> listOf(List<User> userList){
             return userList.stream().map(UserListByHospitalIdDTO::of).collect(Collectors.toList());
         }
+    }
 
-
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class UserWorkListDTO {
+        private Long id;
+        private String name;
+        private Long deptId;
+        private LevelEnum level;
+        private String todayWorkTime;
+        private String weekWorkTime;
+        private String monthWorkTime;
+        private WorkStatusEnum status;
     }
 }
