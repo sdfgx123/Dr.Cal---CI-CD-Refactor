@@ -42,8 +42,14 @@ public class UserResponseDTO {
             int flag;
 
             if (work != null) {
-                workStart = work.getStartTime();
-                flag = 1;
+                if (work.getEndTime() == null) {
+                    workStart = work.getStartTime();
+                    flag = 1;
+                }
+                else  {
+                    workStart = work.getStartTime();
+                    flag = 0;
+                }
             }
             else {
                 flag = 0;
@@ -70,31 +76,4 @@ public class UserResponseDTO {
             );
         }
     }
-
-
-
-
-
-//    public static UserResponseDTO of(User user){
-//        if (user == null) {
-//            return new UserResponseDTO();
-//        }
-//        return new UserResponseDTO(
-//                user.getId(),
-//                user.getEmpNo(),
-//                user.getName(),
-//                user.getEmail(),
-//                user.getPhone(),
-//                user.getHospital().getId(),
-//                user.getDept().getId(),
-//                user.getLevel().name(),
-//                user.getAuth().name(),
-//                user.getStatus().name(),
-//                user.getAnnual(),
-//                user.getDuty(),
-//                user.getProfileImageUrl(),
-//                user.getHiredDate(),
-//                user.getCreatedAt(),
-//                user.getUpdatedAt());
-//    }
 }
