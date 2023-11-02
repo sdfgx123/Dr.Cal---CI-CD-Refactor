@@ -10,13 +10,17 @@ import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.dto.ScheduleResponseDTO;
 import com.fc.mini3server.repository.ScheduleRepository;
 import com.fc.mini3server.repository.UserRepository;
+import com.fc.mini3server.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.fc.mini3server.dto.ScheduleRequestDTO.*;
 
@@ -26,6 +30,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final WorkRepository workRepository;
     private final UserService userService;
 
     public List<ScheduleResponseDTO.ApprovedScheduleListDTO> getApprovedSchedule() {
@@ -197,5 +202,29 @@ public class ScheduleService {
         );
 
         return scheduleRepository.findByUserId(id);
+    }
+
+    public void startWork(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new Exception400("유저를 찾지 못했습니다. 올바른 유저가 요청했는지 확인하십시오."));
+
+        Optional<Work> latestWork = workRepository.findTopByUserIdOrderByStartTimeDesc(userId);
+        if (latestWork.isPresent()) {
+            Work lastWork = latestWork.get();
+            if (lastWork.getStartTime().toLocalDate().isEqual(LocalDate.now())) {
+                throw new Exception400("이미 출근했습니다.");
+            }
+        }
+
+        Work work = new Work();
+        work.setUser(user);
+        work.setStartTime(LocalDateTime.now());
+        workRepository.save(work);
+    }
+
+    public void endWork(Long userId) {
+        Work work = workRepository.findTopByUserIdOrderByStartTimeDesc(userId)
+                        .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다."));
+        work.setEndTime(LocalDateTime.now());
+        workRepository.save(work);
     }
 }

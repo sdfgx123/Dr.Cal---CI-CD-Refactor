@@ -2,13 +2,12 @@ package com.fc.mini3server.dto;
 
 import com.fc.mini3server.domain.User;
 import com.fc.mini3server.domain.Work;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 public class UserResponseDTO {
@@ -75,5 +74,26 @@ public class UserResponseDTO {
                 user.getUpdatedAt()
             );
         }
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class MyPageWorkDTO {
+        private String dayWork;
+        private String weekWork;
+        private String monthWork;
+        private List<WorkDTO> works;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class WorkDTO {
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+        private String workTime;
     }
 }
