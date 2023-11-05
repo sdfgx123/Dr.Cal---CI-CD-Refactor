@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Date;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
@@ -40,7 +41,6 @@ public class JwtTokenProvider {
                 .withClaim("id", user.getId())
                 .withClaim("status", user.getStatus().name())
                 .withClaim("auth", user.getAuth().name())
-                .withClaim("password", user.getPassword())
                 .sign(Algorithm.HMAC512(secretKey));
         return TOKEN_PREFIX + jwt;
     }
