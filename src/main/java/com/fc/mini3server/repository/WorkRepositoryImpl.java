@@ -62,7 +62,7 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
         if (existsStatusOn(userId, start, end))
             return WorkStatusEnum.ON;
 
-        if (existsStatusOFF(userId, start, end)) {
+        if (existsStatusOFF(userId)) {
             if (existsStatusANNUAL(userId, start, end)) {
                 return WorkStatusEnum.ANNUAL;
             }
@@ -85,7 +85,7 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
         return fetchFirst != null;
     }
 
-    private Boolean existsStatusOFF(Long userId, LocalDateTime start, LocalDateTime end) {
+    private Boolean existsStatusOFF(Long userId) {
         Integer fetchFirst = queryFactory
                 .selectOne()
                 .from(work)

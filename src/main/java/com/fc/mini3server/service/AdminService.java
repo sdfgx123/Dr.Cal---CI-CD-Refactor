@@ -235,7 +235,7 @@ public class AdminService {
     }
 
     public String parseDuration(Duration duration) {
-        Long totalSeconds = duration.getSeconds();
+        long totalSeconds = duration.getSeconds();
         Long hours = totalSeconds / 3600;
         Long minutes = (totalSeconds % 3600) / 60;
         Long seconds = totalSeconds % 60;
