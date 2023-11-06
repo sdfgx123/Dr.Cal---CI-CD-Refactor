@@ -24,6 +24,7 @@ import java.util.List;
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
+import static java.lang.Math.abs;
 
 @RequiredArgsConstructor
 @Service
@@ -185,20 +186,20 @@ public class AdminService {
         if (!deptRepository.existsByNameAndHospital(dept, user.getHospital()))
             dept = "All";
 
-        String dayWork = parseDuration(calculateWorkTime(user, level, dept, today, today));
-        String yesterdayWorkTime = parseDuration(calculateWorkTime(user, level, dept, yesterday, yesterday));
-        String weekWork = parseDuration(calculateWorkTime(user, level, dept, startOfWeek, endOfWeek));
-        String lastWeekWorkTime = parseDuration(calculateWorkTime(user, level, dept, startOfLastWeek, endOfLastWeek));
-        String monthWork = parseDuration(calculateWorkTime(user, level, dept, startOfMonth, endOfMonth));
-        String lastMonthWorkTime = parseDuration(calculateWorkTime(user, level, dept, startOfLastMonth, endOfLastMonth));
+        Duration dayWork = calculateWorkTime(user, level, dept, today, today);
+        Duration yesterdayWorkTime = dayWork.minus(calculateWorkTime(user, level, dept, yesterday, yesterday));
+        Duration weekWork = calculateWorkTime(user, level, dept, startOfWeek, endOfWeek);
+        Duration lastWeekWorkTime = weekWork.minus(calculateWorkTime(user, level, dept, startOfLastWeek, endOfLastWeek));
+        Duration monthWork = calculateWorkTime(user, level, dept, startOfMonth, endOfMonth);
+        Duration lastMonthWorkTime = monthWork.minus(calculateWorkTime(user, level, dept, startOfLastMonth, endOfLastMonth));
 
         return UserWorkDashBoardDTO.builder()
-                .dayWork(dayWork)
-                .yesterdayWorkTime(yesterdayWorkTime)
-                .weekWork(weekWork)
-                .lastWeekWorkTime(lastWeekWorkTime)
-                .monthWork(monthWork)
-                .lastMonthWorkTime(lastMonthWorkTime)
+                .dayWork(parseDuration(dayWork))
+                .yesterdayWorkTime(parseDuration(yesterdayWorkTime))
+                .weekWork(parseDuration(weekWork))
+                .lastWeekWorkTime(parseDuration(lastWeekWorkTime))
+                .monthWork(parseDuration(monthWork))
+                .lastMonthWorkTime(parseDuration(lastMonthWorkTime))
                 .build();
     }
 
@@ -237,7 +238,7 @@ public class AdminService {
     public String parseDuration(Duration duration) {
         long totalSeconds = duration.getSeconds();
         Long hours = totalSeconds / 3600;
-        Long minutes = (totalSeconds % 3600) / 60;
+        Long minutes = abs((totalSeconds % 3600) / 60);
 
         return String.format("%d시간 %02d분", hours, minutes);
     }
