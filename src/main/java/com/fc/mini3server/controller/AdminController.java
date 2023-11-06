@@ -111,4 +111,24 @@ public class AdminController {
         adminService.deleteDuty(scheduleId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
+
+    @Operation(summary = "관리자 근무관리 페이지 대시보드")
+    @GetMapping("/work/dashboard")
+    public ResponseEntity<?> workDashboard(
+            @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
+            @RequestParam(name = "dept", required = false, defaultValue = "") String dept) {
+        final UserWorkDashBoardDTO result = adminService.findUserWorkDashBoard(level, dept);
+        return ResponseEntity.ok(ApiUtils.success(result));
+    }
+
+    @Operation(summary = "관리자 근무관리 페이지 리스트")
+    @GetMapping("/work")
+    public ResponseEntity<?> work(
+            @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
+            @RequestParam(name = "dept", required = false, defaultValue = "") String dept, @PageableDefault(size = 10) Pageable pageable) {
+        final UserWorkListPageDTO userWorkList = adminService.findUserWorkList(level, dept, pageable);
+        return ResponseEntity.ok(ApiUtils.success(
+                userWorkList.getTotalPages(), userWorkList.getUserWorkList()
+        ));
+    }
 }

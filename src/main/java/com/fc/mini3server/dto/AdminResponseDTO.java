@@ -2,6 +2,7 @@ package com.fc.mini3server.dto;
 
 import com.fc.mini3server.domain.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.fc.mini3server.dto.AdminRequestDTO.*;
 
 public class AdminResponseDTO {
 
@@ -109,7 +112,51 @@ public class AdminResponseDTO {
         public static List<UserListByHospitalIdDTO> listOf(List<User> userList) {
             return userList.stream().map(UserListByHospitalIdDTO::of).collect(Collectors.toList());
         }
+    }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class UserWorkDashBoardDTO {
+        String dayWork;
+        String yesterdayWorkTime;
+        String weekWork;
+        String lastWeekWorkTime;
+        String monthWork;
+        String lastMonthWorkTime;
+    }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class UserWorkListPageDTO {
+        private int totalPages;
+        List<UserWorkListDTO> userWorkList;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class UserWorkListDTO {
+        private Long id;
+        private String name;
+        private Long deptId;
+        private LevelEnum level;
+        private String todayWorkTime;
+        private String weekWorkTime;
+        private String monthWorkTime;
+        private WorkStatusEnum status;
+
+        public static UserWorkListDTO of(findUserWorkTimeDTO requestDTO) {
+            return new UserWorkListDTO(requestDTO.getUserId(), requestDTO.getUsername(), requestDTO.getDeptId(),
+                    requestDTO.getLevel(), requestDTO.getTodayWorkTime(), requestDTO.getWeekWorkTime(),
+                    requestDTO.getMonthWorkTime(), requestDTO.getStatus());
+        }
+
+        public static List<UserWorkListDTO> listOf(List<findUserWorkTimeDTO> list){
+            return list.stream().map(UserWorkListDTO::of).collect(Collectors.toList());
+        }
     }
 }

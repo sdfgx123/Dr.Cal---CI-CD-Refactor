@@ -13,6 +13,8 @@ public interface UserRepositoryCustom {
 
     List<User> findAllByHospitalAndAuthAndLevelIn(Hospital hospital, AuthEnum auth, List<LevelEnum> level);
 
+    Page<User> findAllByAuthAndLevelAndHospitalAndDept(AuthEnum auth, LevelEnum level, Hospital hospital, String dept, Pageable pageable);
+
     Page<AdminUserListDTO> findByHospitalAndStatusNot(Hospital hospital, StatusEnum status, Pageable pageable);
 
     Page<joinReqListDTO> findByHospitalAndStatusIs(Hospital hospital, StatusEnum status, Pageable pageable);

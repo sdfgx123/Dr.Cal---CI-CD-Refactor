@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface WorkRepository extends JpaRepository<Work, Long> {
+public interface WorkRepository extends JpaRepository<Work, Long>, WorkRepositoryCustom {
     Work findFirstByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
     List<Work> findAllByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end);
     Page<Work> findByUserAndStartTimeBetween(User user, LocalDateTime startOfweek, LocalDateTime endOfweek, Pageable pageable);

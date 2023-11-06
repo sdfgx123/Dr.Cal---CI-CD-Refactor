@@ -2,6 +2,7 @@ package com.fc.mini3server.repository;
 
 import com.fc.mini3server.domain.*;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -106,5 +108,45 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         );
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    @Override
+    public Page<User> findAllByAuthAndLevelAndHospitalAndDept(AuthEnum auth, LevelEnum level, Hospital hospital, String dept, Pageable pageable) {
+        List<User> content = queryFactory.selectFrom(user)
+                .where(
+                        user.auth.eq(auth),
+                        eqLevel(level),
+                        user.hospital.eq(hospital),
+                        eqDept(dept)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> count = queryFactory
+                .select(user.count())
+                .from(user)
+                .where(
+                        user.auth.eq(auth),
+                        eqLevel(level),
+                        user.hospital.eq(hospital),
+                        eqDept(dept)
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    private BooleanExpression eqLevel(LevelEnum level) {
+        if (ObjectUtils.isEmpty(level)) {
+            return null;
+        }
+        return user.level.eq(level);
+    }
+
+    private BooleanExpression eqDept(String dept) {
+        if (dept.equals("All")) {
+            return null;
+        }
+        return user.dept.name.eq(dept);
     }
 }
