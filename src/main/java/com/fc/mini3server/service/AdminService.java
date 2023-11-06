@@ -238,9 +238,8 @@ public class AdminService {
         long totalSeconds = duration.getSeconds();
         Long hours = totalSeconds / 3600;
         Long minutes = (totalSeconds % 3600) / 60;
-        Long seconds = totalSeconds % 60;
 
-        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        return String.format("%d시간 %02d분", hours, minutes);
     }
 
     public Duration calculateWorkTime(User user, LevelEnum level, String dept, LocalDate start, LocalDate end) {
