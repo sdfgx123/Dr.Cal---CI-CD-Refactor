@@ -116,7 +116,7 @@ public class AdminController {
     @GetMapping("/work/dashboard")
     public ResponseEntity<?> workDashboard(
             @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
-            @RequestParam(name = "dept", required = false, defaultValue = "") String dept){
+            @RequestParam(name = "dept", required = false, defaultValue = "") String dept) {
         final UserWorkDashBoardDTO result = adminService.findUserWorkDashBoard(level, dept);
         return ResponseEntity.ok(ApiUtils.success(result));
     }
@@ -125,10 +125,10 @@ public class AdminController {
     @GetMapping("/work")
     public ResponseEntity<?> work(
             @RequestParam(name = "level", required = false, defaultValue = "") LevelEnum level,
-            @RequestParam(name = "dept", required = false, defaultValue = "") String dept, @PageableDefault(size = 10) Pageable pageable){
-        final Page<UserWorkListDTO> userWorkList = adminService.findUserWorkList(level, dept, pageable);
+            @RequestParam(name = "dept", required = false, defaultValue = "") String dept, @PageableDefault(size = 10) Pageable pageable) {
+        final UserWorkListPageDTO userWorkList = adminService.findUserWorkList(level, dept, pageable);
         return ResponseEntity.ok(ApiUtils.success(
-                userWorkList.getTotalPages(), userWorkList.getContent()
+                userWorkList.getTotalPages(), userWorkList.getUserWorkList()
         ));
     }
 }

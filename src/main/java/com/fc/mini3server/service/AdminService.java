@@ -3,6 +3,7 @@ package com.fc.mini3server.service;
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
 import com.fc.mini3server.domain.*;
+import com.fc.mini3server.dto.AdminRequestDTO;
 import com.fc.mini3server.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,24 +17,44 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.fc.mini3server._core.handler.Message.*;
 import static com.fc.mini3server.dto.AdminRequestDTO.*;
 import static com.fc.mini3server.dto.AdminResponseDTO.*;
-import static com.fc.mini3server.dto.AdminResponseDTO.AdminUserListDTO;
-import static com.fc.mini3server.dto.AdminResponseDTO.joinReqListDTO;
 
 @RequiredArgsConstructor
 @Service
 public class AdminService {
+    private static final LocalDate today = LocalDate.now();
+    private static final LocalDate yesterday = today.minusDays(1);
+    private static final LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    private static final LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+    private static final LocalDate startOfLastWeek = today.minusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    private static final LocalDate endOfLastWeek = today.minusWeeks(1).with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+    private static final LocalDate startOfMonth = today.withDayOfMonth(1);
+    private static final LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+    private static final LocalDate startOfLastMonth = today.minusMonths(1).withDayOfMonth(1);
+    private static final LocalDate endOfLastMonth = today.minusMonths(1).withDayOfMonth(today.lengthOfMonth());
     private final UserService userService;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
     private final WorkRepository workRepository;
+
+    private static Duration getTotalDuration(List<Work> works) {
+        Duration totalDuration = Duration.ZERO;
+
+        for (Work work : works) {
+            LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
+            Duration duration = Duration.between(work.getStartTime(), endTime);
+            totalDuration = totalDuration.plus(duration);
+        }
+        return totalDuration;
+    }
 
     public Page<AdminUserListDTO> findAllUserListAdmin(Pageable pageable) {
         User user = userService.getUser();
@@ -164,19 +185,6 @@ public class AdminService {
         if (!deptRepository.existsByNameAndHospital(dept, user.getHospital()))
             dept = "All";
 
-        LocalDate today = LocalDate.now();
-        LocalDate yesterday = today.minusDays(1);
-
-        LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-        LocalDate startOfLastWeek = today.minusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfLastWeek = today.minusWeeks(1).with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-
-        LocalDate startOfMonth = today.withDayOfMonth(1);
-        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-        LocalDate startOfLastMonth = today.minusMonths(1).withDayOfMonth(1);
-        LocalDate endOfLastMonth = today.minusMonths(1).withDayOfMonth(today.lengthOfMonth());
-
         String dayWork = parseDuration(calculateWorkTime(user, level, dept, today, today));
         String yesterdayWorkTime = parseDuration(calculateWorkTime(user, level, dept, yesterday, yesterday));
         String weekWork = parseDuration(calculateWorkTime(user, level, dept, startOfWeek, endOfWeek));
@@ -194,15 +202,36 @@ public class AdminService {
                 .build();
     }
 
-    public Page<UserWorkListDTO> findUserWorkList(LevelEnum level, String dept, Pageable pageable) {
+    public UserWorkListPageDTO findUserWorkList(LevelEnum level, String dept, Pageable pageable) {
+        User user = userService.getUser();
 
-        //        List<UserWorkListDTO> workList = workRepository.findUserWorkListByHospital(level, dept, user.getHospital());
+        if (!deptRepository.existsByNameAndHospital(dept, user.getHospital()))
+            dept = "All";
 
+        Page<User> userPageList = userRepository.findAllByAuthAndLevelAndHospitalAndDept(
+                AuthEnum.USER, level, user.getHospital(), dept, pageable);
 
-        //        return workRepository.findUserWorkListByHospital(level, dept, user.getHospital(), pageable);
+        List<User> userList = userPageList.getContent();
 
+        List<findUserWorkTimeDTO> UserWorkList = new ArrayList<>();
 
-        return null;
+        for (User u : userList) {
+
+            WorkStatusEnum status = workRepository.findUserWorkStatus(u.getId(), today.atStartOfDay(), today.atTime(23, 59, 59));
+
+            UserWorkList.add(AdminRequestDTO.findUserWorkTimeDTO.builder()
+                    .userId(u.getId())
+                    .username(u.getName())
+                    .deptId(u.getDept().getId())
+                    .level(u.getLevel())
+                    .todayWorkTime(parseDuration(calculateUserWorkTime(u, level, dept, today, today)))
+                    .weekWorkTime(parseDuration(calculateUserWorkTime(u, level, dept, startOfWeek, endOfWeek)))
+                    .monthWorkTime(parseDuration(calculateUserWorkTime(u, level, dept, startOfMonth, endOfMonth)))
+                    .status(status)
+                    .build());
+        }
+
+        return new UserWorkListPageDTO(userPageList.getTotalPages(), UserWorkListDTO.listOf(UserWorkList));
     }
 
     public String parseDuration(Duration duration) {
@@ -213,20 +242,18 @@ public class AdminService {
 
         return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
+
     public Duration calculateWorkTime(User user, LevelEnum level, String dept, LocalDate start, LocalDate end) {
 
-        List<Work> works = workRepository.findCalcUserList(level, dept, user.getHospital(), start.atStartOfDay(), end.atTime(23, 59, 59));
+        List<Work> works = workRepository.findCalcHospitalUserList(level, dept, user.getHospital(), start.atStartOfDay(), end.atTime(23, 59, 59));
 
-        Duration totalDuration = Duration.ZERO;
-
-        for (Work work : works) {
-            LocalDateTime endTime = work.getEndTime() != null ? work.getEndTime() : LocalDateTime.now();
-            Duration duration = Duration.between(work.getStartTime(), endTime);
-            totalDuration = totalDuration.plus(duration);
-        }
-
-        return totalDuration;
+        return getTotalDuration(works);
     }
 
+    public Duration calculateUserWorkTime(User user, LevelEnum level, String dept, LocalDate start, LocalDate end) {
 
+        List<Work> works = workRepository.findCalcUserList(level, dept, user.getId(), start.atStartOfDay(), end.atTime(23, 59, 59));
+
+        return getTotalDuration(works);
+    }
 }

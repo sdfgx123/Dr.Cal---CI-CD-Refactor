@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.fc.mini3server.dto.AdminRequestDTO.*;
+
 public class AdminResponseDTO {
 
     @NoArgsConstructor
@@ -125,40 +127,36 @@ public class AdminResponseDTO {
         String lastMonthWorkTime;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class UserWorkListPageDTO {
+        private int totalPages;
+        List<UserWorkListDTO> userWorkList;
+    }
 
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
+    @Builder
     public static class UserWorkListDTO {
         private Long id;
         private String name;
         private Long deptId;
         private LevelEnum level;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private String todayWorkTime;
+        private String weekWorkTime;
+        private String monthWorkTime;
+        private WorkStatusEnum status;
 
+        public static UserWorkListDTO of(findUserWorkTimeDTO requestDTO) {
+            return new UserWorkListDTO(requestDTO.getUserId(), requestDTO.getUsername(), requestDTO.getDeptId(),
+                    requestDTO.getLevel(), requestDTO.getTodayWorkTime(), requestDTO.getWeekWorkTime(),
+                    requestDTO.getMonthWorkTime(), requestDTO.getStatus());
+        }
 
-//    @NoArgsConstructor
-//    @AllArgsConstructor
-//    @Getter
-//    public static class UserWorkListDTO {
-//        private Long id;
-//        private String name;
-//        private Long deptId;
-//        private LevelEnum level;
-//        private String todayWorkTime;
-//        private String weekWorkTime;
-//        private String monthWorkTime;
-//        private WorkStatusEnum status;
-
-//        public static UserWorkListDTO of(WorkInterface wi) {
-//            return new UserWorkListDTO(wi.getId(), wi.getName(), wi.getDeptId(),
-//                    LevelEnum.PK, wi.getTodayWorkTime(), wi.getMonthWorkTime(), wi.getWeekWorkTime()
-//                ,WorkStatusEnum.ANNUAL);
-//        }
-//
-//        public static List<UserWorkListDTO> listOf(List<WorkInterface> wi){
-//            return wi.stream().map(UserWorkListDTO::of).collect(Collectors.toList());
-//        }
+        public static List<UserWorkListDTO> listOf(List<findUserWorkTimeDTO> list){
+            return list.stream().map(UserWorkListDTO::of).collect(Collectors.toList());
+        }
     }
 }

@@ -1,26 +1,24 @@
 package com.fc.mini3server.repository;
 
-import com.fc.mini3server.domain.Hospital;
-import com.fc.mini3server.domain.LevelEnum;
-import com.fc.mini3server.domain.Work;
-import com.querydsl.core.types.Projections;
+import com.fc.mini3server.domain.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.fc.mini3server.domain.QSchedule.schedule;
 import static com.fc.mini3server.domain.QWork.work;
-import static com.fc.mini3server.dto.AdminResponseDTO.UserWorkListDTO;
 
 @RequiredArgsConstructor
 public class WorkRepositoryImpl implements WorkRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Work> findCalcUserList(LevelEnum level, String dept, Hospital hospital, LocalDateTime start, LocalDateTime end) {
+    public List<Work> findCalcHospitalUserList(LevelEnum level, String dept, Hospital hospital, LocalDateTime start, LocalDateTime end) {
         return queryFactory.select(work)
                 .from(work)
                 .where(
@@ -33,54 +31,16 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
     }
 
     @Override
-    public List<UserWorkListDTO> findUserWorkListByHospital(LevelEnum level, String dept, Hospital hospital) {
-
-
-        List<UserWorkListDTO> content = queryFactory
-                .select(
-                        Projections.constructor(UserWorkListDTO.class,
-                                work.user.id,
-                                work.user.name,
-                                work.user.dept.id,
-                                work.user.level,
-                                work.startTime,
-                                work.endTime
-//                                JPAExpressions
-//                                        .select(
-//                                                schedule.count().as("status"))
-//                                        .from(schedule)
-//                                        .where(
-//                                                schedule.category.eq(CategoryEnum.ANNUAL),
-//                                                schedule.evaluation.eq(EvaluationEnum.APPROVED),
-//                                                schedule.user.id.eq(work.user.id),
-//                                                schedule.startDate.eq(LocalDate.now())
-//                                        )
-                        )
-                )
+    public List<Work> findCalcUserList(LevelEnum level, String dept, Long userId, LocalDateTime start, LocalDateTime end) {
+        return queryFactory.select(work)
                 .from(work)
                 .where(
-                        work.user.hospital.eq(hospital),
+                        work.user.id.eq(userId),
                         work.endTime.isNotNull(),
                         eqLevel(level),
-                        eqDept(dept)
-                )
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-                .fetch();
-
-        return content;
-
-//
-//        JPAQuery<Long> count = queryFactory
-//                .select(work.count())
-//                .from(work)
-//                .where(
-//                        work.user.hospital.eq(hospital),
-//                        eqLevel(level),
-//                        eqDept(dept)
-//                );
-
-//        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+                        eqDept(dept),
+                        work.startTime.between(start, end)
+                ).fetch();
     }
 
     private BooleanExpression eqLevel(LevelEnum level) {
@@ -97,23 +57,60 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
         return work.user.dept.name.eq(dept);
     }
 
-//    private WorkStatusEnum findWorkStatus() {
-//        return queryFactory.select(
-//                new CaseBuilder()
-//                        .when(
-//                                work.startTime.isNotNull(),
-//                                work.endTime.isNull()
-//                        ).then()
-//
-//
-//        ).from(work)
-//                .leftJoin(schedule).on(
-//                        work.user.eq(schedule.user),
-//                        schedule.category.eq(CategoryEnum.ANNUAL),
-//                        schedule.startDate.eq(LocalDate.now())
-//                )
-//                .fetchFirst();
-//
-//    }
+    public WorkStatusEnum findUserWorkStatus(Long userId, LocalDateTime start, LocalDateTime end) {
 
+        if (existsStatusOn(userId, start, end))
+            return WorkStatusEnum.ON;
+
+        if (existsStatusOFF(userId, start, end)) {
+            if (existsStatusANNUAL(userId, start, end)) {
+                return WorkStatusEnum.ANNUAL;
+            }
+        }
+
+        return WorkStatusEnum.OFF;
+    }
+
+    public Boolean existsStatusOn(Long userId, LocalDateTime start, LocalDateTime end) {
+        Integer fetchFirst = queryFactory
+                .selectOne()
+                .from(work)
+                .where(
+                        work.user.id.eq(userId),
+                        work.startTime.between(start, end),
+                        work.endTime.isNull()
+                )
+                .fetchFirst();
+
+        return fetchFirst != null;
+    }
+
+    private Boolean existsStatusOFF(Long userId, LocalDateTime start, LocalDateTime end) {
+        Integer fetchFirst = queryFactory
+                .selectOne()
+                .from(work)
+                .where(
+                        work.user.id.eq(userId),
+                        work.startTime.isNotNull().and(work.endTime.isNotNull())
+                                .or(work.startTime.isNull().and(work.endTime.isNull()))
+                )
+                .fetchFirst();
+
+        return fetchFirst != null;
+    }
+
+    private Boolean existsStatusANNUAL(Long userId, LocalDateTime start, LocalDateTime end) {
+        Integer fetchFirst = queryFactory
+                .selectOne()
+                .from(schedule)
+                .where(
+                        schedule.user.id.eq(userId),
+                        schedule.category.eq(CategoryEnum.ANNUAL),
+                        schedule.evaluation.eq(EvaluationEnum.APPROVED),
+                        schedule.startDate.loe(LocalDate.now())
+                                .and(schedule.endDate.goe(LocalDate.now()))
+                ).fetchFirst();
+
+        return fetchFirst != null;
+    }
 }
