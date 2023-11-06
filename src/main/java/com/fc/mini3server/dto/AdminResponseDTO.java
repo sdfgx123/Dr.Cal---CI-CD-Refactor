@@ -2,9 +2,9 @@ package com.fc.mini3server.dto;
 
 import com.fc.mini3server.domain.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -115,14 +115,50 @@ public class AdminResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
+    @Builder
+    public static class UserWorkDashBoardDTO {
+        String dayWork;
+        String yesterdayWorkTime;
+        String weekWork;
+        String lastWeekWorkTime;
+        String monthWork;
+        String lastMonthWorkTime;
+    }
+
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
     public static class UserWorkListDTO {
         private Long id;
         private String name;
         private Long deptId;
         private LevelEnum level;
-        private String todayWorkTime;
-        private String weekWorkTime;
-        private String monthWorkTime;
-        private WorkStatusEnum status;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Getter
+//    public static class UserWorkListDTO {
+//        private Long id;
+//        private String name;
+//        private Long deptId;
+//        private LevelEnum level;
+//        private String todayWorkTime;
+//        private String weekWorkTime;
+//        private String monthWorkTime;
+//        private WorkStatusEnum status;
+
+//        public static UserWorkListDTO of(WorkInterface wi) {
+//            return new UserWorkListDTO(wi.getId(), wi.getName(), wi.getDeptId(),
+//                    LevelEnum.PK, wi.getTodayWorkTime(), wi.getMonthWorkTime(), wi.getWeekWorkTime()
+//                ,WorkStatusEnum.ANNUAL);
+//        }
+//
+//        public static List<UserWorkListDTO> listOf(List<WorkInterface> wi){
+//            return wi.stream().map(UserWorkListDTO::of).collect(Collectors.toList());
+//        }
     }
 }
