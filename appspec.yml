@@ -3,9 +3,11 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/mini3-server
+    overwrite: yes
 
 permissions:
   - object: /home/ubuntu/mini3-server
+    pattern: "*"
     owner: ubuntu
     group: ubuntu
 
