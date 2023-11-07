@@ -23,4 +23,4 @@ fi
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포"    >> /home/ubuntu/mini3-server/deploy.log
 chmod +x $DEPLOY_JAR
-nohup java -jar $DEPLOY_JAR >> /home/ubuntu/deploy.log 2>/home/ubuntu/mini3-server/deploy_err.log &
+nohup java -jar $DEPLOY_JAR >> /home/ubuntu/mini3-server/deploy.log 2>/home/ubuntu/mini3-server/deploy_err.log &
