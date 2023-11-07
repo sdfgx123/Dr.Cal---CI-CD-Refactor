@@ -27,18 +27,18 @@
           show_sql: false
           dialect: org.hibernate.dialect.MySQL8Dialect
 
-    file:
-      path: "./images/"
-    secret-key: klner8xv0se
+  file:
+    path: "./images/"
+  secret-key: klner8xv0se
 
-    cloud:
-      aws:
-        stack:
-          auto: false
-        s3:
-          bucket: drcal-bucket
-        region:
-          static: ap-northeast-2
-        credentials:
-          access-key: ${AWS_ACCESS_KEY}
-          secret-key: ${AWS_SECRET_KEY}
+  cloud:
+    aws:
+      stack:
+        auto: false
+      s3:
+        bucket: drcal-bucket
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
