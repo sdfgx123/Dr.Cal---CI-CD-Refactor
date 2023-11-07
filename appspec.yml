@@ -6,8 +6,8 @@ files:
     overwrite: yes
 
 permissions:
-  - object: /home/ubuntu/mini3-server
-    pattern: "*"
+  - object: /
+    pattern: "**"
     owner: ubuntu
     group: ubuntu
 
