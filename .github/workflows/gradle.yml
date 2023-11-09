@@ -61,7 +61,7 @@ jobs:
       run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
     - name: docker run new container
-      run: sudo docker run --rm -e -d -e -v ~/mini/images:/images -e -p 8080:8080 -e TZ=Asia/Seoul -e ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
+      run: sudo docker run --rm -e -d -e -v /home/ubuntu/mini/images:/images -e -p 8080:8080 -e TZ=Asia/Seoul -e ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
 
     - name: delete lagecy docker image
       run: sudo docker system prune -f
