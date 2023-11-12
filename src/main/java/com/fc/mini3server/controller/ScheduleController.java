@@ -97,6 +97,13 @@ public class ScheduleController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
+    @PostMapping("/on/redis")
+    public ResponseEntity<ApiUtils.ApiResult<String>> startWorkUsingRedis() {
+        Long userId = userService.getUser().getId();
+        scheduleService.startWorkUsingRedis(userId);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
+
     @PostMapping("/off")
     public ResponseEntity<ApiUtils.ApiResult<String>> endWork() {
         Long userId = userService.getUser().getId();
