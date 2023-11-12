@@ -4,14 +4,11 @@ import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.utils.ApiUtils;
 import com.fc.mini3server.domain.Schedule;
 import com.fc.mini3server.domain.CategoryEnum;
-import com.fc.mini3server.domain.User;
-import com.fc.mini3server.dto.UserResponseDTO;
 import com.fc.mini3server.service.ScheduleService;
 import com.fc.mini3server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,7 +93,7 @@ public class ScheduleController {
     @PostMapping("/on")
     public ResponseEntity<ApiUtils.ApiResult<String>> startWork() {
         Long userId = userService.getUser().getId();
-        scheduleService.startWorkUsingRedis(userId);
+        scheduleService.startWork(userId);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
