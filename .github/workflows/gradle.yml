@@ -51,14 +51,23 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: docker pull
+    - name: docker pull WAS
       run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
+
+    - name: docker pull Redis
+      run: sudo docker pull redis
 
     - name: docker stop container
       run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
-    - name: docker run new container
-      run: sudo docker run --name drcal-cicd-was --rm -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
+    - name: docker network create
+      run: sudo docker create network test-network
+
+    - name: docker run WAS container
+      run: sudo docker run --name drcal-cicd-was --network test-network --rm -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
+
+    - name: docker run Redis container
+      run: sudo docker run --name test-redis --network test-network --rm -d redis
 
     - name: delete lagecy docker image
       run: sudo docker system prune -f
