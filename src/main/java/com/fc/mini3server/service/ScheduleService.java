@@ -260,6 +260,7 @@ public class ScheduleService {
                 throw new Exception500("REDIS LOCK 획득 실패");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new Exception500("UNKNOWN ERROR");
         }
     }
