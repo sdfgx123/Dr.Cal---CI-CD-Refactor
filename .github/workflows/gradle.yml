@@ -61,7 +61,7 @@ jobs:
       run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
     - name: docker network create
-      run: sudo docker create network test-network
+      run: sudo docker network create test-network
 
     - name: docker run WAS container
       run: sudo docker run --name drcal-cicd-was --network test-network --rm -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
