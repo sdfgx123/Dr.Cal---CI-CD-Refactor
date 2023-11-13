@@ -10,7 +10,7 @@ server:
   port: 8080
 spring:
   redis:
-    host: drcal-network
+    host: test-network
     port: 6379
   datasource:
     url: jdbc:mysql://minidb.c74fq5jjb22v.ap-northeast-2.rds.amazonaws.com:3306/minidb?serverTimezone=Asia/Seoul
