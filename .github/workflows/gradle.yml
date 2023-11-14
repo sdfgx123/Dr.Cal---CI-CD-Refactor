@@ -60,11 +60,20 @@ jobs:
     - name: docker stop container
       run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
+    - name: check and create network
+      run: |
+        if [ -z "${sudo docker network ls | grep drcal-network}" ]; then
+          echo "no network found | create new docker network"
+          sudo docker network create drcal-network
+        else
+          echo "drcal-network already exists"
+        fi
+
     - name: docker run WAS container
-      run: sudo docker run --name drcal-cicd-was --rm -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
+      run: sudo docker run --name drcal-cicd-was --rm --network drcal-network -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
 
     - name: docker run Redis container
-      run: sudo docker run --name test-redis --rm -d redis
+      run: sudo docker run --name test-redis --network drcal-network --rm -d redis
 
     - name: delete lagecy docker image
       run: sudo docker system prune -f
