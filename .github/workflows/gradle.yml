@@ -62,7 +62,7 @@ jobs:
 
     - name: check and create network
       run: |
-        if [ -z "${sudo docker network ls | grep drcal-network}" ]; then
+        if ! sudo docker network ls | grep -q drcal-network; then
           echo "no network found | create new docker network"
           sudo docker network create drcal-network
         else
