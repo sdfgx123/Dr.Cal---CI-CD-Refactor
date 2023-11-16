@@ -12,6 +12,8 @@ import com.fc.mini3server.repository.*;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,7 +50,6 @@ public class UserService {
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
     private final WorkRepository workRepository;
-    private final WorkRepositoryCustom workRepositoryCustom;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -135,17 +136,17 @@ public class UserService {
         return user;
     }
 
-    public Work getWorkInfoWithUser(User user) {
-        LocalDate today = LocalDate.now();
-        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
-                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
-        );
-        return work;
-    }
+//    public Work getWorkInfoWithUser(User user) {
+//        LocalDate today = LocalDate.now();
+//        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
+//                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
+//        );
+//        return work;
+//    }
 
     public Work getWorkInfoWithUserWithQueryDSL(User user) {
         LocalDate today = LocalDate.now();
-        Work work = workRepositoryCustom.findFirstWorkByUserIdAndStartTimeBetween(
+        Work work = workRepository.findFirstWorkByUserIdAndStartTimeBetween(
                 user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
         );
         return work;
