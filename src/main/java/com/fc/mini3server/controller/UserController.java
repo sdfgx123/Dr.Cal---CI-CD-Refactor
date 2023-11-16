@@ -61,7 +61,7 @@ public class UserController {
     @GetMapping("/myPage")
     public ResponseEntity<ApiUtils.ApiResult<UserResponseDTO.MyPageDTO>> myPage() {
         User user = userService.getUser();
-        Work work = userService.getWorkInfoWithUser(user);
+        Work work = userService.getWorkInfoWithUserWithQueryDSL(user);
         UserResponseDTO.MyPageDTO myPageDTO = UserResponseDTO.MyPageDTO.of(user, work);
         log.info("유저 상세정보 호출 | 호출 대상 유저 : " + user.getEmail());
         return ResponseEntity.ok(ApiUtils.success(myPageDTO));
