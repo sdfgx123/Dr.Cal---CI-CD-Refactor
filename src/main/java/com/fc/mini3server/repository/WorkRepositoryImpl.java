@@ -113,4 +113,15 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
 
         return fetchFirst != null;
     }
+
+    @Override
+    public Work findFirstWorkByUserIdAndStartTimeBetween(Long userId, LocalDateTime start, LocalDateTime end) {
+        QWork work = QWork.work;
+        return queryFactory.selectFrom(work)
+                .where(work.user.id.eq(userId)
+                        .and(work.startTime.between(start, end)))
+                .orderBy(work.startTime.asc())
+                .fetchFirst();
+    }
+
 }
