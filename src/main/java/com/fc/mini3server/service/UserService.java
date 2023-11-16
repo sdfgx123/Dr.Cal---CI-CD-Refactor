@@ -8,10 +8,7 @@ import com.fc.mini3server._core.security.PrincipalUserDetail;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server.dto.UserRequestDTO;
 import com.fc.mini3server.dto.UserResponseDTO;
-import com.fc.mini3server.repository.DeptRepository;
-import com.fc.mini3server.repository.HospitalRepository;
-import com.fc.mini3server.repository.UserRepository;
-import com.fc.mini3server.repository.WorkRepository;
+import com.fc.mini3server.repository.*;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +48,7 @@ public class UserService {
     private final HospitalRepository hospitalRepository;
     private final DeptRepository deptRepository;
     private final WorkRepository workRepository;
+    private final WorkRepositoryCustom workRepositoryCustom;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -140,6 +138,14 @@ public class UserService {
     public Work getWorkInfoWithUser(User user) {
         LocalDate today = LocalDate.now();
         Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
+                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
+        );
+        return work;
+    }
+
+    public Work getWorkInfoWithUserWithQueryDSL(User user) {
+        LocalDate today = LocalDate.now();
+        Work work = workRepositoryCustom.findFirstWorkByUserIdAndStartTimeBetween(
                 user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
         );
         return work;
