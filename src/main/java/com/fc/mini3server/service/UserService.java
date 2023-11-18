@@ -136,13 +136,13 @@ public class UserService {
         return user;
     }
 
-//    public Work getWorkInfoWithUser(User user) {
-//        LocalDate today = LocalDate.now();
-//        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
-//                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
-//        );
-//        return work;
-//    }
+    public Work getWorkInfoWithUser(User user) {
+        LocalDate today = LocalDate.now();
+        Work work = workRepository.findFirstByUserIdAndStartTimeBetween(
+                user.getId(), today.atStartOfDay(), today.atTime(23, 59, 59)
+        );
+        return work;
+    }
 
     public Work getWorkInfoWithUserWithQueryDSL(User user) {
         LocalDate today = LocalDate.now();
@@ -163,7 +163,8 @@ public class UserService {
         String weekWork = parseDuration(calculateWorkTime(user, startOfWeek, endOfWeek));
         String monthWork = parseDuration(calculateWorkTime(user, startOfMonth, endOfMonth));
 
-        Page<Work> worksPage = workRepository.findByUserOrderByStartTimeDesc(user, pageable);
+//        Page<Work> worksPage = workRepository.findByUserOrderByStartTimeDesc(user, pageable);
+        Page<Work> worksPage = workRepository.findWorkByUserOrderByStartTimeDesc(user, pageable);
         List<UserResponseDTO.WorkDTO> works = worksPage.stream()
                 .map(work -> new UserResponseDTO.WorkDTO(work.getStartTime(), work.getEndTime(), parseDuration(calculateWorkTimeForSingleWork(work))))
                 .collect(Collectors.toList());
