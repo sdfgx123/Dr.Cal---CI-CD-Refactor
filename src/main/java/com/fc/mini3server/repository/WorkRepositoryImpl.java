@@ -4,6 +4,10 @@ import com.fc.mini3server.domain.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
@@ -13,6 +17,7 @@ import java.util.List;
 import static com.fc.mini3server.domain.QSchedule.schedule;
 import static com.fc.mini3server.domain.QWork.work;
 
+@Slf4j
 @RequiredArgsConstructor
 public class WorkRepositoryImpl implements WorkRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -122,6 +127,37 @@ public class WorkRepositoryImpl implements WorkRepositoryCustom {
                         .and(work.startTime.between(start, end)))
                 .orderBy(work.startTime.asc())
                 .fetchFirst();
+    }
+
+    @Override
+    public Page<Work> findWorkByUserOrderByStartTimeDesc(User user, Pageable pageable) {
+        log.info("findWorkByUserOrderByStartTimeDesc START");
+//        QWork work = QWork.work;
+//        JPQLQuery<Work> query = queryFactory.selectFrom(work)
+//                .where(work.user.eq(user))
+//                .orderBy(work.startTime.desc());
+//
+//        Long total = query.fetchCount();
+//        QueryDSLSupport queryDSLSupport = new QueryDSLSupport(queryFactory, entityManager);
+//        log.info("QueryDSLSupport instance create DONE | instance : " + queryDSLSupport);
+//        Page<Work> results = queryDSLSupport.makePagination(pageable, query, total);
+//        return results;
+
+        QWork work = QWork.work;
+
+        List<Work> works = queryFactory.selectFrom(work)
+                .where(work.user.eq(user))
+                .orderBy(work.startTime.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long totalCnt = queryFactory.selectFrom(work)
+                .where(work.user.eq(user))
+                .fetchCount();
+
+        log.info("findWorkByUserOrderByStartTimeDesc SUCCESSFULLY END");
+        return new PageImpl<>(works, pageable, totalCnt);
     }
 
 }
