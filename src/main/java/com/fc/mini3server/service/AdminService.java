@@ -38,7 +38,7 @@ public class AdminService {
     private static final LocalDate startOfMonth = today.withDayOfMonth(1);
     private static final LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
     private static final LocalDate startOfLastMonth = today.minusMonths(1).withDayOfMonth(1);
-    private static final LocalDate endOfLastMonth = today.minusMonths(1).withDayOfMonth(today.lengthOfMonth());
+    private static final LocalDate endOfLastMonth = today.withDayOfMonth(1).minusMonths(1).withDayOfMonth(today.minusMonths(1).lengthOfMonth());
     private final UserService userService;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
