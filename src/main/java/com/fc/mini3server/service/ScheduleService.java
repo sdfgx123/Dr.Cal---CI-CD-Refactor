@@ -2,7 +2,6 @@ package com.fc.mini3server.service;
 
 import com.fc.mini3server._core.handler.Message;
 import com.fc.mini3server._core.handler.exception.Exception400;
-import com.fc.mini3server._core.handler.exception.Exception500;
 import com.fc.mini3server.domain.*;
 import com.fc.mini3server._core.handler.exception.Exception404;
 import com.fc.mini3server.domain.CategoryEnum;
@@ -232,36 +231,35 @@ public class ScheduleService {
         String lockKey = "lock:" + userId;
         String lockVal = UUID.randomUUID().toString();
 
+        Boolean acquired = redisTemplate.opsForValue().setIfAbsent(lockKey, lockVal, 10, TimeUnit.SECONDS);
+        log.info("lockKey : " + lockKey + ", " + "lockVal : " + lockVal);
+        log.info("acquired : " + acquired);
+
+        if (! Boolean.TRUE.equals(acquired)) {
+            log.info("락 획득 실패, 다른 스레드가 우선순위를 가짐");
+            return;
+        }
+
         try {
-            Boolean acquired = redisTemplate.opsForValue().setIfAbsent(lockKey, lockVal, 10, TimeUnit.SECONDS);
-            log.info("lockKey : " + lockKey + ", " + "lockVal : " + lockVal);
-            if (Boolean.TRUE.equals(acquired)) {
-                try {
-                    User user = userRepository.findById(userId).orElseThrow(() -> new Exception400("유저를 찾지 못했습니다. 올바른 유저가 요청했는지 확인하십시오."));
+            User user = userRepository.findById(userId).orElseThrow(() -> new Exception400("유저를 찾지 못했습니다. 올바른 유저가 요청했는지 확인하십시오."));
 
-                    Optional<Work> latestWork = workRepository.findTopByUserIdOrderByStartTimeDesc(userId);
-                    if (latestWork.isPresent()) {
-                        Work lastWork = latestWork.get();
-                        if (lastWork.getStartTime().toLocalDate().isEqual(LocalDate.now())) {
-                            throw new Exception400("이미 출근했습니다.");
-                        }
-                    }
-
-                    Work work = new Work();
-                    work.setUser(user);
-                    work.setStartTime(LocalDateTime.now());
-                    workRepository.save(work);
-                    log.info("INSERT to DB safely");
-                } finally {
-                    String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-                    redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Collections.singletonList(lockKey), lockVal);
+            Optional<Work> latestWork = workRepository.findTopByUserIdOrderByStartTimeDesc(userId);
+            if (latestWork.isPresent()) {
+                Work lastWork = latestWork.get();
+                if (lastWork.getStartTime().toLocalDate().isEqual(LocalDate.now())) {
+                    throw new Exception400("이미 출근했습니다.");
                 }
-            } else {
-                throw new Exception500("REDIS LOCK 획득 실패");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception500("UNKNOWN ERROR");
+
+            Work work = new Work();
+            work.setUser(user);
+            work.setStartTime(LocalDateTime.now());
+            workRepository.save(work);
+            log.info("INSERT to DB safely");
+
+        } finally {
+            String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+            redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Collections.singletonList(lockKey), lockVal);
         }
     }
 
