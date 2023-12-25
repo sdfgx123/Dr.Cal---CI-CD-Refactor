@@ -52,28 +52,28 @@ jobs:
 
     steps:
     - name: docker pull WAS
-      run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
+      run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
 
     - name: docker pull Redis
-      run: sudo docker pull redis
+      run: docker pull redis
 
     - name: docker stop container
-      run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+      run: docker stop $(docker ps -q) 2>/dev/null || true
 
     - name: check and create network
       run: |
-        if ! sudo docker network ls | grep -q drcal-network; then
+        if ! docker network ls | grep -q drcal-network; then
           echo "no network found | create new docker network"
-          sudo docker network create drcal-network
+          docker network create drcal-network
         else
           echo "drcal-network already exists"
         fi
 
     - name: docker run WAS container
-      run: sudo docker run --name drcal-cicd-was --rm --network drcal-network -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul paul245/drcal-cicd-was
+      run: docker run --name drcal-cicd-was --rm --network drcal-network -d -v /home/ubuntu/mini/images:/images -p 8080:8080 -e TZ=Asia/Seoul ${{ secrets.DOCKERHUB_USERNAME }}/drcal-cicd-was
 
     - name: docker run Redis container
-      run: sudo docker run --name test-redis --network drcal-network --rm -d redis
+      run: docker run --name test-redis --network drcal-network --rm -d redis
 
     - name: delete lagecy docker image
-      run: sudo docker system prune -f
+      run: docker system prune -f
