@@ -39,3 +39,5 @@ out/
 ### DS Store ###
 **/.DS_Store
 
+### remove from tracking application config ###
+**/resources
